@@ -12,7 +12,6 @@ engine.loadingScreen.displayLoadingUI();
 let scene = new BABYLON.Scene(engine);
 scene.clearColor = new BABYLON.Color4(0, 0, 0, 1);
 
-let orbitalCamera = new BABYLON.ArcRotateCamera("orbitalCamera", Math.PI / 2, Math.PI / 3, 200, BABYLON.Vector3.Zero(), scene);
 let freeCamera = new BABYLON.FreeCamera("freeCamera", new BABYLON.Vector3(0, 0, -200), scene);
 freeCamera.keysUp.push(90, 87); // z,w
 freeCamera.keysLeft.push(81, 65); // q,a
@@ -25,6 +24,8 @@ freeCamera.maxZ = 10000;
 
 freeCamera.attachControl(canvas);
 scene.activeCamera = freeCamera;
+
+let orbitalCamera = new BABYLON.ArcRotateCamera("orbitalCamera", Math.PI / 2, Math.PI / 3, 200, BABYLON.Vector3.Zero(), scene);
 
 let light = new BABYLON.PointLight("light", BABYLON.Vector3.Zero(), scene);
 
@@ -55,17 +56,16 @@ earth.material = earthMaterial;
 let atmosphere = new AtmosphericScatteringPostProcess("atmosphere", earth, planetRadius, atmosphereRadius, sun, freeCamera, scene);
 //let depthPost = new DepthPostProcess("depth", freeCamera, scene);
 
-/*function switchCamera(newCamera: BABYLON.Camera) {
+function switchCamera(newCamera: BABYLON.Camera) {
     scene.activeCamera?.detachControl(canvas);
-    scene.activeCamera?.detachPostProcess(atmosphere);
 
     scene.activeCamera = newCamera;
     newCamera.attachControl(canvas);
 
     //Call this function to use one atmosphere for all cameras
     atmosphere.setCamera(newCamera);
-}*/
-//switchCamera(freeCamera);
+}
+switchCamera(freeCamera);
 
 // cloud layer just above ground level
 let epsilon = 1e-1;
@@ -81,9 +81,11 @@ earth.rotation.x = Math.PI; // textures are always upside down on sphere for som
 
 orbitalCamera.setTarget(earth);
 
+let moon = BABYLON.Mesh.CreateSphere("moon", 32, 10, scene);
+moon.position = new BABYLON.Vector3(-30, 0, 80);
 
 //#region Sliders
-/*new Slider("intensity", document.getElementById("intensity")!, 0, 40, atmosphere.settings.intensity, (val: number) => {
+new Slider("intensity", document.getElementById("intensity")!, 0, 40, atmosphere.settings.intensity, (val: number) => {
     atmosphere.settings.intensity = val;
 });
 
@@ -120,23 +122,23 @@ new Slider("sunOrientation", document.getElementById("sunOrientation")!, 1, 360,
 let rotationSpeed = 1;
 new Slider("planetRotation", document.getElementById("planetRotation")!, 0, 20, rotationSpeed * 10, (val: number) => {
     rotationSpeed = (val / 10) ** 5;
-});*/
+});
 //#endregion
 
-/*document.getElementById("switchView")?.addEventListener("click", () => {
+document.getElementById("switchView")?.addEventListener("click", () => {
     if (scene.activeCamera == freeCamera) switchCamera(orbitalCamera);
     else switchCamera(freeCamera);
-});*/
+});
 
 document.addEventListener("keydown", e => {
     if (e.key == "p") { // take screenshots
         BABYLON.Tools.CreateScreenshotUsingRenderTarget(engine, freeCamera, { precision: 4 });
     } else if (e.key == "f") {
         console.log(Math.round(engine.getFps()));
-    }/* else if (e.key == "c") {
+    } else if (e.key == "c") {
         if (scene.activeCamera == freeCamera) switchCamera(orbitalCamera);
         else switchCamera(freeCamera);
-    }*/
+    }
 });
 
 window.addEventListener("resize", () => {
@@ -150,14 +152,12 @@ scene.executeWhenReady(() => {
 
     engine.runRenderLoop(() => {
 
-        //let sunRadians = (sunOrientation / 360) * 2 * Math.PI;
+        let sunRadians = (sunOrientation / 360) * 2 * Math.PI;
 
-        sun.position = new BABYLON.Vector3(-100 * Math.cos(0), 50, 100 * Math.sin(0));
+        sun.position = new BABYLON.Vector3(100 * Math.cos(sunRadians), 50, 100 * Math.sin(sunRadians));
 
-        //sun.position = new BABYLON.Vector3(100 * Math.cos(sunRadians), 50, 100 * Math.sin(sunRadians));
-
-        /*earth.rotation.y += -engine.getDeltaTime() * rotationSpeed / 100000;
-        cloudLayer.rotation.y = engine.getDeltaTime() * rotationSpeed / 500000;*/
+        earth.rotation.y += -engine.getDeltaTime() * rotationSpeed / 100000;
+        cloudLayer.rotation.y = engine.getDeltaTime() * rotationSpeed / 500000;
 
         scene.render();
     });

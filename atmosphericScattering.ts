@@ -23,6 +23,7 @@ export class AtmosphericScatteringPostProcess extends BABYLON.PostProcess {
 
             "projection",
             "view",
+            "transform",
 
             "cameraNear",
             "cameraFar",
@@ -39,6 +40,7 @@ export class AtmosphericScatteringPostProcess extends BABYLON.PostProcess {
             "greenWaveLength",
             "blueWaveLength"
         ], [
+            "textureSampler",
             "depthSampler",
         ], 1, camera, BABYLON.Texture.BILINEAR_SAMPLINGMODE, scene.getEngine(), true);
 
@@ -59,7 +61,7 @@ export class AtmosphericScatteringPostProcess extends BABYLON.PostProcess {
 
         this.setCamera(this.camera);
 
-        let depthRenderer = new BABYLON.DepthRenderer(scene, 1, camera, false);
+        let depthRenderer = new BABYLON.DepthRenderer(scene);
         scene.customRenderTargets.push(depthRenderer.getDepthMap());
 
         this.onBeforeRender = (effect: BABYLON.Effect) => {
@@ -73,6 +75,7 @@ export class AtmosphericScatteringPostProcess extends BABYLON.PostProcess {
 
             effect.setMatrix("projection", this.camera.getProjectionMatrix());
             effect.setMatrix("view", this.camera.getViewMatrix());
+            effect.setMatrix("transform", this.camera.getTransformationMatrix());
 
             effect.setFloat("cameraNear", camera.minZ);
             effect.setFloat("cameraFar", camera.maxZ);
@@ -91,6 +94,7 @@ export class AtmosphericScatteringPostProcess extends BABYLON.PostProcess {
     }
 
     setCamera(camera: BABYLON.Camera) {
+        this.camera.detachPostProcess(this);
         this.camera = camera;
         camera.attachPostProcess(this);
     }
