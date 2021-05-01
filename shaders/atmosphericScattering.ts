@@ -1,9 +1,10 @@
-interface AtmosphereSettings {
+export interface AtmosphereSettings {
     planetRadius: number,
     atmosphereRadius: number,
     falloffFactor: number,
     intensity: number,
     scatteringStrength: number,
+    densityModifier: number,
     redWaveLength: number,
     greenWaveLength: number,
     blueWaveLength: number,
@@ -17,13 +18,12 @@ export class AtmosphericScatteringPostProcess extends BABYLON.PostProcess {
     planet: BABYLON.Mesh;
 
     constructor(name: string, planet: BABYLON.Mesh, planetRadius: number, atmosphereRadius: number, sun: BABYLON.Mesh | BABYLON.PointLight, camera: BABYLON.Camera, scene: BABYLON.Scene) {
-        super(name, "./shaders/simplifiedScattering", [
+        super(name, "../shaders/atmosphericScattering", [
             "sunPosition",
             "cameraPosition",
 
             "projection",
             "view",
-            "transform",
 
             "cameraNear",
             "cameraFar",
@@ -35,6 +35,7 @@ export class AtmosphericScatteringPostProcess extends BABYLON.PostProcess {
             "falloffFactor",
             "sunIntensity",
             "scatteringStrength",
+            "densityModifier",
 
             "redWaveLength",
             "greenWaveLength",
@@ -50,6 +51,7 @@ export class AtmosphericScatteringPostProcess extends BABYLON.PostProcess {
             falloffFactor: 15,
             intensity: 15,
             scatteringStrength: 1,
+            densityModifier: 1,
             redWaveLength: 700,
             greenWaveLength: 530,
             blueWaveLength: 440,
@@ -63,10 +65,11 @@ export class AtmosphericScatteringPostProcess extends BABYLON.PostProcess {
 
         let depthRenderer = new BABYLON.DepthRenderer(scene);
         scene.customRenderTargets.push(depthRenderer.getDepthMap());
+        let depthMap = depthRenderer.getDepthMap();
 
-        this.onBeforeRender = (effect: BABYLON.Effect) => {
+        this.onApply = (effect: BABYLON.Effect) => {
 
-            effect.setTexture("depthSampler", depthRenderer.getDepthMap());
+            effect.setTexture("depthSampler", depthMap);
 
             effect.setVector3("sunPosition", this.sun.getAbsolutePosition());
             effect.setVector3("cameraPosition", this.camera.position);
@@ -75,7 +78,6 @@ export class AtmosphericScatteringPostProcess extends BABYLON.PostProcess {
 
             effect.setMatrix("projection", this.camera.getProjectionMatrix());
             effect.setMatrix("view", this.camera.getViewMatrix());
-            effect.setMatrix("transform", this.camera.getTransformationMatrix());
 
             effect.setFloat("cameraNear", camera.minZ);
             effect.setFloat("cameraFar", camera.maxZ);
@@ -86,6 +88,7 @@ export class AtmosphericScatteringPostProcess extends BABYLON.PostProcess {
             effect.setFloat("falloffFactor", this.settings.falloffFactor);
             effect.setFloat("sunIntensity", this.settings.intensity);
             effect.setFloat("scatteringStrength", this.settings.scatteringStrength);
+            effect.setFloat("densityModifier", this.settings.densityModifier);
 
             effect.setFloat("redWaveLength", this.settings.redWaveLength);
             effect.setFloat("greenWaveLength", this.settings.greenWaveLength);
