@@ -28,3 +28,5 @@ interface AtmosphereSettings {
     blueWaveLength: number, // same but blue
 }
 ```
+
+You can take a look at the simplest implementation in ./starter/
