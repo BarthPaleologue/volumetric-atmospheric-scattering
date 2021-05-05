@@ -1,13 +1,13 @@
 interface AtmosphereSettings {
-    planetRadius: number,
-    atmosphereRadius: number,
-    falloffFactor: number,
-    intensity: number,
-    scatteringStrength: number,
-    densityModifier: number,
-    redWaveLength: number,
-    greenWaveLength: number,
-    blueWaveLength: number,
+    planetRadius: number, // changes the value used as the minimum height of the atmosphere
+    atmosphereRadius: number, // changes the value used as the maximum height of the atmosphere
+    falloffFactor: number, // changes the pace at whitch the density of the atmosphere decreases
+    intensity: number, // changes the intensity of the colors scattered
+    scatteringStrength: number, // changes the dispersion of the three wavelengths
+    densityModifier: number, // changes the overall density of the atmosphere
+    redWaveLength: number, // changes the value used as the red wavelength in nanometers
+    greenWaveLength: number, // same but green
+    blueWaveLength: number, // same but blue
 }
 
 class AtmosphericScatteringPostProcess extends BABYLON.PostProcess {
