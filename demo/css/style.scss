@@ -3,7 +3,7 @@ body {
     overflow: hidden;
     user-select: none;
     #ui {
-        background: rgba(0,0,0,.7);
+        background: rgba(0,0,0,1);
         position: absolute;
         top: 0;
         right: 0;
@@ -14,6 +14,7 @@ body {
         p {
             font-family: sans-serif;
             color: white;
+            padding: 10px 20px;
             margin-block-end: 0;
         }
         .range-slider {

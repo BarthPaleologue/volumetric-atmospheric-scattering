@@ -1,4 +1,4 @@
-import { AtmosphericScatteringPostProcess } from "../shaders/atmosphericScattering.js";
+"use strict";
 let canvas = document.getElementById("renderer");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;

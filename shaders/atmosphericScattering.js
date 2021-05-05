@@ -1,5 +1,7 @@
-export class AtmosphericScatteringPostProcess extends BABYLON.PostProcess {
+"use strict";
+class AtmosphericScatteringPostProcess extends BABYLON.PostProcess {
     constructor(name, planet, planetRadius, atmosphereRadius, sun, camera, scene) {
+        // you might need to change the path to the .fragment.fx file
         super(name, "../shaders/atmosphericScattering", [
             "sunPosition",
             "cameraPosition",
@@ -43,7 +45,7 @@ export class AtmosphericScatteringPostProcess extends BABYLON.PostProcess {
             effect.setTexture("depthSampler", depthMap);
             effect.setVector3("sunPosition", this.sun.getAbsolutePosition());
             effect.setVector3("cameraPosition", this.camera.position);
-            effect.setVector3("planetPosition", this.planet.position);
+            effect.setVector3("planetPosition", this.planet.absolutePosition);
             effect.setMatrix("projection", this.camera.getProjectionMatrix());
             effect.setMatrix("view", this.camera.getViewMatrix());
             effect.setFloat("cameraNear", camera.minZ);

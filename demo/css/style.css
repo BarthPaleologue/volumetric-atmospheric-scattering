@@ -8,7 +8,7 @@ body {
 }
 
 body #ui {
-  background: rgba(0, 0, 0, 0.7);
+  background: black;
   position: absolute;
   top: 0;
   right: 0;
@@ -21,6 +21,7 @@ body #ui {
 body #ui p {
   font-family: sans-serif;
   color: white;
+  padding: 10px 20px;
   -webkit-margin-after: 0;
           margin-block-end: 0;
 }

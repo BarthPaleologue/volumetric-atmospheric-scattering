@@ -1,8 +1,8 @@
-import { AtmosphericScatteringPostProcess } from "./shaders/atmosphericScattering.js";
+//import { AtmosphericScatteringPostProcess } from "../shaders/atmosphericScattering.js";
 import { Slider } from "./SliderJS-main/slider.js";
 
 let canvas = document.getElementById("renderer") as HTMLCanvasElement;
-canvas.width = window.innerWidth;
+canvas.width = window.innerWidth - 300;
 canvas.height = window.innerHeight;
 
 let engine = new BABYLON.Engine(canvas);
@@ -28,7 +28,7 @@ let vls1 = new BABYLON.VolumetricLightScatteringPostProcess("trueLight", 1, free
 let vls2 = new BABYLON.VolumetricLightScatteringPostProcess("trueLight2", 1, orbitalCamera, sun, 100);
 
 let sunMaterial = new BABYLON.StandardMaterial("sunMaterial", scene);
-sunMaterial.emissiveTexture = new BABYLON.Texture("./textures/sun.jpg", scene);
+sunMaterial.emissiveTexture = new BABYLON.Texture("../textures/sun.jpg", scene);
 sun.material = sunMaterial;
 
 light.parent = sun;
@@ -39,9 +39,9 @@ const atmosphereRadius = 55;
 let earth = BABYLON.Mesh.CreateSphere("Earth", 32, planetRadius * 2, scene);
 
 let earthMaterial = new BABYLON.StandardMaterial("earthMaterial", scene);
-earthMaterial.diffuseTexture = new BABYLON.Texture("./textures/earth.jpg", scene);
-earthMaterial.emissiveTexture = new BABYLON.Texture("./textures/night2.jpg", scene);
-earthMaterial.specularTexture = new BABYLON.Texture("./textures/specular2.jpg", scene);
+earthMaterial.diffuseTexture = new BABYLON.Texture("../textures/earth.jpg", scene);
+earthMaterial.emissiveTexture = new BABYLON.Texture("../textures/night2.jpg", scene);
+earthMaterial.specularTexture = new BABYLON.Texture("../textures/specular2.jpg", scene);
 
 earth.material = earthMaterial;
 
@@ -62,7 +62,7 @@ switchCamera(orbitalCamera);
 let epsilon = 1e-1;
 let cloudLayer = BABYLON.Mesh.CreateSphere("clouds", 32, (planetRadius + epsilon) * 2, scene);
 let cloudMaterial = new BABYLON.StandardMaterial("cloudMaterial", scene);
-cloudMaterial.opacityTexture = new BABYLON.Texture("./textures/clouds4.jpg", scene);
+cloudMaterial.opacityTexture = new BABYLON.Texture("../textures/clouds4.jpg", scene);
 cloudMaterial.opacityTexture.getAlphaFromRGB = true;
 
 cloudLayer.material = cloudMaterial;

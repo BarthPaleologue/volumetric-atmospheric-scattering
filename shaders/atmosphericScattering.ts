@@ -1,4 +1,4 @@
-export interface AtmosphereSettings {
+interface AtmosphereSettings {
     planetRadius: number,
     atmosphereRadius: number,
     falloffFactor: number,
@@ -10,7 +10,7 @@ export interface AtmosphereSettings {
     blueWaveLength: number,
 }
 
-export class AtmosphericScatteringPostProcess extends BABYLON.PostProcess {
+class AtmosphericScatteringPostProcess extends BABYLON.PostProcess {
 
     settings: AtmosphereSettings;
     camera: BABYLON.Camera;
@@ -18,6 +18,7 @@ export class AtmosphericScatteringPostProcess extends BABYLON.PostProcess {
     planet: BABYLON.Mesh;
 
     constructor(name: string, planet: BABYLON.Mesh, planetRadius: number, atmosphereRadius: number, sun: BABYLON.Mesh | BABYLON.PointLight, camera: BABYLON.Camera, scene: BABYLON.Scene) {
+        // you might need to change the path to the .fragment.fx file
         super(name, "../shaders/atmosphericScattering", [
             "sunPosition",
             "cameraPosition",
@@ -74,7 +75,7 @@ export class AtmosphericScatteringPostProcess extends BABYLON.PostProcess {
             effect.setVector3("sunPosition", this.sun.getAbsolutePosition());
             effect.setVector3("cameraPosition", this.camera.position);
 
-            effect.setVector3("planetPosition", this.planet.position);
+            effect.setVector3("planetPosition", this.planet.absolutePosition);
 
             effect.setMatrix("projection", this.camera.getProjectionMatrix());
             effect.setMatrix("view", this.camera.getViewMatrix());
