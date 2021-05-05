@@ -7,6 +7,8 @@ A simple implementation of volumetric atmospheric scattering using babylonjs. Al
 ![photo3](https://github.com/BarthPaleologue/volumetric-atmospheric-scattering/blob/main/pictures/pic3.png)
 ![photo4](https://github.com/BarthPaleologue/volumetric-atmospheric-scattering/blob/main/pictures/pic4.png)
 
+You can find a demo at https://barthpaleologue.github.io/volumetric-atmospheric-scattering/demo/
+
 You need to include the ./shaders/atmosphericScattering.js file in your html code after babylonjs and before your main script, then simply call :
 
 ```js
