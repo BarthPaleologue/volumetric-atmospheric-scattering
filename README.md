@@ -2,8 +2,10 @@
  
 A simple implementation of volumetric atmospheric scattering using babylonjs. All you need is the shader folder and two lines of code to use it ! Here are some pictures : 
 
-![photo1](http://url/to/img.png)
-![photo2](http://url/to/img.png)
+![photo1](https://github.com/BarthPaleologue/volumetric-atmospheric-scattering/blob/main/pictures/pic1.png)
+![photo2](https://github.com/BarthPaleologue/volumetric-atmospheric-scattering/blob/main/pictures/pic2.png)
+![photo3](https://github.com/BarthPaleologue/volumetric-atmospheric-scattering/blob/main/pictures/pic3.png)
+![photo4](https://github.com/BarthPaleologue/volumetric-atmospheric-scattering/blob/main/pictures/pic4.png)
 
 You need to include the ./shaders/atmosphericScattering.js file in your html code after babylonjs and before your main script, then simply call :
 
