@@ -1,4 +1,4 @@
-# volumetric atmospheric scattering
+# Volumetric Atmospheric Scattering
  
 A simple implementation of volumetric atmospheric scattering using babylonjs. All you need is the shader folder and two lines of code to use it ! Here are some pictures : 
 
