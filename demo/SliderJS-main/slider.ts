@@ -69,7 +69,7 @@ export class Slider {
         this.update();
     }
     update() {
-        this.handle.innerHTML = this.slider.value;
+        this.handle.innerText = this.slider.value;
         let handlePosition = ((this.getValue() - this.min) / (this.max - this.min));
         this.handle.style.marginLeft = handlePosition * (this.slider.offsetWidth - 50) - this.handle.offsetWidth / 2 + "px";
         this.slide(parseInt(this.slider.value));
