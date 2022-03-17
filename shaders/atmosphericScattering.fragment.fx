@@ -171,7 +171,7 @@ void main() {
 
     // closest physical point from the camera in the direction of the pixel (occlusion)
     vec3 closestPoint = (pixelWorldPosition - cameraPosition) * remap(depth, 0.0, 1.0, cameraNear, cameraFar);
-    float maximumDistance = length(closestPoint) + rand(vUV); // the maxium ray length due to occlusion
+    float maximumDistance = length(closestPoint) + rand(vUV) / 10.0; // the maxium ray length due to occlusion
 
     vec3 rayDir = normalize(pixelWorldPosition - cameraPosition); // normalized direction of the ray
 
