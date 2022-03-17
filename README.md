@@ -1,4 +1,8 @@
 # Volumetric Atmospheric Scattering
+
+[![pages-build-deployment](https://github.com/BarthPaleologue/volumetric-atmospheric-scattering/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/BarthPaleologue/volumetric-atmospheric-scattering/actions/workflows/pages/pages-build-deployment)
+[![License](https://img.shields.io/github/license/BarthPaleologue/volumetric-atmospheric-scattering)](./LICENSE)
+
  
 A simple implementation of volumetric atmospheric scattering using babylonjs. All you need is the shader folder and two lines of code to use it ! Here are some pictures : 
 
