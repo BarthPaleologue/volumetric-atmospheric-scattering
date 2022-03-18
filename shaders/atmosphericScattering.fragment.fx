@@ -52,7 +52,7 @@ vec3 worldFromUV(vec2 pos) {
 }
 
 // returns whether or not a ray hits a sphere, if yes out intersection points
-// a good explanation of how it works : https://viclw17.github.io/2018/07/16/raytracing-ray-sphere-intersection/
+// a good explanation of how it works : https://viclw17.github.io/2018/07/16/raytracing-ray-sphere-intersection
 bool rayIntersectSphere(vec3 rayOrigin, vec3 rayDir, vec3 spherePosition, float sphereRadius, out float t0, out float t1) {
     vec3 relativeOrigin = rayOrigin - spherePosition; // rayOrigin in sphere space
 
@@ -171,7 +171,7 @@ void main() {
 
     // closest physical point from the camera in the direction of the pixel (occlusion)
     vec3 closestPoint = (pixelWorldPosition - cameraPosition) * remap(depth, 0.0, 1.0, cameraNear, cameraFar);
-    float maximumDistance = length(closestPoint); // the maxium ray length due to occlusion
+    float maximumDistance = length(closestPoint) + rand(vUV) / 10.0; // the maxium ray length due to occlusion
 
     vec3 rayDir = normalize(pixelWorldPosition - cameraPosition); // normalized direction of the ray
 
