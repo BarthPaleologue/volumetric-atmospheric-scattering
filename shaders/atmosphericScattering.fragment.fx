@@ -43,13 +43,15 @@ float rand(vec2 co) {
     return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
 }
 
-// compute the world position of a pixel from its uv coordinates
-vec3 worldFromUV(vec2 pos) {
-    vec4 ndc = vec4(pos.xy * 2.0 - 1.0, -1.0, 1.0); // get ndc position -1 because i want every point in the near camera plane
-    vec4 posVS = inverseProjection * ndc; // unproject the ndc coordinates : we are now in view space if i understand correctly
-    vec4 posWS = inverseView * vec4((posVS.xyz / posVS.w), 1.0); // then we use inverse view to get to world space, division by w to get actual coordinates
-    return posWS.xyz; // the coordinates in world space
+// compute the world position of a pixel from its uv coordinates and depth
+vec3 worldFromUV(vec2 UV, float depth) {
+    vec4 ndc = vec4(UV * 2.0 - 1.0, 0.0, 1.0);
+    vec4 posVS = inverseProjection * ndc;
+    posVS.xyz *= remap(depth, 0.0, 1.0, cameraNear, cameraFar);
+    vec4 posWS = inverseView * vec4(posVS.xyz, 1.0);
+    return posWS.xyz;
 }
+
 
 // returns whether or not a ray hits a sphere, if yes out intersection points
 // a good explanation of how it works : https://viclw17.github.io/2018/07/16/raytracing-ray-sphere-intersection
@@ -167,13 +169,14 @@ void main() {
 
     float depth = texture2D(depthSampler, vUV).r; // the depth corresponding to the pixel in the depth map
     
-    vec3 pixelWorldPosition = worldFromUV(vUV); // the pixel position in world space (near plane)
+    // deepest physical point from the camera in the direction of the pixel (occlusion)
+    // if there is no occlusion, the deepest point is on the far plane
+    vec3 deepestPoint = worldFromUV(vUV, depth) - cameraPosition;
 
-    // closest physical point from the camera in the direction of the pixel (occlusion)
-    vec3 closestPoint = (pixelWorldPosition - cameraPosition) * remap(depth, 0.0, 1.0, cameraNear, cameraFar);
-    float maximumDistance = length(closestPoint) + rand(vUV) / 10.0; // the maxium ray length due to occlusion
+    float maximumDistance = length(deepestPoint); // the maxium ray length due to occlusion
+    maximumDistance += rand(vUV) / 10.0; // adding a bit of randomness to avoid geometry artifacts
 
-    vec3 rayDir = normalize(pixelWorldPosition - cameraPosition); // normalized direction of the ray
+    vec3 rayDir = normalize(deepestPoint); // normalized direction of the ray
 
     vec3 finalColor = scatter(screenColor, cameraPosition, rayDir, maximumDistance); // the color to be displayed on the screen
 
