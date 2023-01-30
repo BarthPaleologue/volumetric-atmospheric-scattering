@@ -14,10 +14,11 @@ class AtmosphericScatteringPostProcess extends BABYLON.PostProcess {
 
     settings: AtmosphereSettings;
     camera: BABYLON.Camera;
-    sun: BABYLON.Mesh | BABYLON.PointLight;
+    sun: BABYLON.TransformNode | BABYLON.Light;
     planet: BABYLON.Mesh;
+    depthRenderer: BABYLON.DepthRenderer;
 
-    constructor(name: string, planet: BABYLON.Mesh, planetRadius: number, atmosphereRadius: number, sun: BABYLON.Mesh | BABYLON.PointLight, camera: BABYLON.Camera, scene: BABYLON.Scene) {
+    constructor(name: string, planet: BABYLON.Mesh, planetRadius: number, atmosphereRadius: number, sun: BABYLON.TransformNode | BABYLON.Light, camera: BABYLON.Camera, depthRenderer: BABYLON.DepthRenderer, scene: BABYLON.Scene) {
         // you might need to change the path to the .fragment.fx file
         super(name, "../shaders/atmosphericScattering", [
             "sunPosition",
@@ -62,15 +63,14 @@ class AtmosphericScatteringPostProcess extends BABYLON.PostProcess {
         this.sun = sun;
         this.planet = planet;
 
-        this.setCamera(this.camera);
+        //this.setCamera(this.camera);
+        camera.attachPostProcess(this);
 
-        let depthRenderer = scene.enableDepthRenderer(scene.activeCamera);
-        scene.customRenderTargets.push(depthRenderer.getDepthMap());
-        let depthMap = depthRenderer.getDepthMap();
+        this.depthRenderer = depthRenderer;
 
         this.onApply = (effect: BABYLON.Effect) => {
 
-            effect.setTexture("depthSampler", depthMap);
+            effect.setTexture("depthSampler", this.depthRenderer.getDepthMap());
 
             effect.setVector3("sunPosition", this.sun.getAbsolutePosition());
             effect.setVector3("cameraPosition", this.camera.position);
@@ -95,11 +95,5 @@ class AtmosphericScatteringPostProcess extends BABYLON.PostProcess {
             effect.setFloat("greenWaveLength", this.settings.greenWaveLength);
             effect.setFloat("blueWaveLength", this.settings.blueWaveLength);
         };
-    }
-
-    setCamera(camera: BABYLON.Camera) {
-        this.camera.detachPostProcess(this);
-        this.camera = camera;
-        camera.attachPostProcess(this);
     }
 }

@@ -1,53 +1,61 @@
 var _a;
 //import { AtmosphericScatteringPostProcess } from "../shaders/atmosphericScattering.js";
 import { Slider } from "./SliderJS-main/slider.js";
-let canvas = document.getElementById("renderer");
+const canvas = document.getElementById("renderer");
 canvas.width = window.innerWidth - 300;
 canvas.height = window.innerHeight;
-let engine = new BABYLON.Engine(canvas);
+const engine = new BABYLON.Engine(canvas);
 engine.loadingScreen.displayLoadingUI();
-let scene = new BABYLON.Scene(engine);
+const scene = new BABYLON.Scene(engine);
 scene.clearColor = new BABYLON.Color4(0, 0, 0, 1);
-let orbitalCamera = new BABYLON.ArcRotateCamera("orbitalCamera", Math.PI / 2, Math.PI / 3, 200, BABYLON.Vector3.Zero(), scene);
-let freeCamera = new BABYLON.FreeCamera("freeCamera", new BABYLON.Vector3(0, 0, -200), scene);
+const orbitalCamera = new BABYLON.ArcRotateCamera("orbitalCamera", Math.PI / 2, Math.PI / 3, 200, BABYLON.Vector3.Zero(), scene);
+const freeCamera = new BABYLON.FreeCamera("freeCamera", new BABYLON.Vector3(0, 0, -200), scene);
 freeCamera.keysUp.push(90, 87); // z,w
 freeCamera.keysLeft.push(81, 65); // q,a
 freeCamera.keysDown.push(83); // s
 freeCamera.keysRight.push(68); // d
 freeCamera.keysUpward.push(32); // space
 freeCamera.keysDownward.push(16); // shift
-let sun = BABYLON.Mesh.CreateSphere("Sun", 32, 10, scene);
-let vls1 = new BABYLON.VolumetricLightScatteringPostProcess("trueLight", 1, freeCamera, sun, 100);
-let vls2 = new BABYLON.VolumetricLightScatteringPostProcess("trueLight2", 1, orbitalCamera, sun, 100);
-let sunMaterial = new BABYLON.StandardMaterial("sunMaterial", scene);
+const depthRendererOrbital = scene.enableDepthRenderer(orbitalCamera);
+scene.customRenderTargets.push(depthRendererOrbital.getDepthMap());
+const depthRendererFree = scene.enableDepthRenderer(freeCamera);
+scene.customRenderTargets.push(depthRendererFree.getDepthMap());
+const sun = BABYLON.Mesh.CreateSphere("Sun", 32, 10, scene);
+new BABYLON.VolumetricLightScatteringPostProcess("trueLight", 1, freeCamera, sun, 100);
+new BABYLON.VolumetricLightScatteringPostProcess("trueLight2", 1, orbitalCamera, sun, 100);
+const sunMaterial = new BABYLON.StandardMaterial("sunMaterial", scene);
 sunMaterial.emissiveTexture = new BABYLON.Texture("../textures/sun.jpg", scene);
 sunMaterial.disableLighting = true;
 sun.material = sunMaterial;
-console.log(sun.position);
-let light = new BABYLON.DirectionalLight("light", BABYLON.Vector3.Zero(), scene);
+const light = new BABYLON.DirectionalLight("light", BABYLON.Vector3.Zero(), scene);
 const planetRadius = 50;
 const atmosphereRadius = 55;
-let earth = BABYLON.Mesh.CreateSphere("Earth", 32, planetRadius * 2, scene);
-let earthMaterial = new BABYLON.StandardMaterial("earthMaterial", scene);
+const earth = BABYLON.Mesh.CreateSphere("Earth", 32, planetRadius * 2, scene);
+const earthMaterial = new BABYLON.StandardMaterial("earthMaterial", scene);
 earthMaterial.diffuseTexture = new BABYLON.Texture("../textures/earth.jpg", scene);
 earthMaterial.emissiveTexture = new BABYLON.Texture("../textures/night2.jpg", scene);
 earthMaterial.specularTexture = new BABYLON.Texture("../textures/specular2.jpg", scene);
 earth.material = earthMaterial;
 // The important line
-let atmosphere = new AtmosphericScatteringPostProcess("atmosphere", earth, planetRadius, atmosphereRadius, sun, orbitalCamera, scene);
+const atmosphere = new AtmosphericScatteringPostProcess("atmosphere", earth, planetRadius, atmosphereRadius, sun, orbitalCamera, depthRendererOrbital, scene);
 function switchCamera(newCamera) {
-    var _a;
-    (_a = scene.activeCamera) === null || _a === void 0 ? void 0 : _a.detachControl(canvas);
+    var _a, _b;
+    (_a = scene.activeCamera) === null || _a === void 0 ? void 0 : _a.detachPostProcess(atmosphere);
+    (_b = scene.activeCamera) === null || _b === void 0 ? void 0 : _b.detachControl(canvas);
     scene.activeCamera = newCamera;
     newCamera.attachControl(canvas);
-    //Call this function to use one atmosphere for all cameras
-    atmosphere.setCamera(newCamera);
+    if (newCamera instanceof BABYLON.ArcRotateCamera)
+        atmosphere.depthRenderer = depthRendererOrbital;
+    else
+        atmosphere.depthRenderer = depthRendererFree;
+    atmosphere.camera = newCamera;
+    newCamera.attachPostProcess(atmosphere);
 }
-switchCamera(orbitalCamera);
+switchCamera(atmosphere.camera);
 // cloud layer just above ground level
-let epsilon = 1e-1;
-let cloudLayer = BABYLON.Mesh.CreateSphere("clouds", 32, (planetRadius + epsilon) * 2, scene);
-let cloudMaterial = new BABYLON.StandardMaterial("cloudMaterial", scene);
+const epsilon = 1e-1;
+const cloudLayer = BABYLON.Mesh.CreateSphere("clouds", 32, (planetRadius + epsilon) * 2, scene);
+const cloudMaterial = new BABYLON.StandardMaterial("cloudMaterial", scene);
 cloudMaterial.opacityTexture = new BABYLON.Texture("../textures/clouds4.jpg", scene);
 cloudMaterial.opacityTexture.getAlphaFromRGB = true;
 cloudLayer.material = cloudMaterial;
@@ -116,7 +124,7 @@ window.addEventListener("resize", () => {
 scene.executeWhenReady(() => {
     engine.loadingScreen.hideLoadingUI();
     scene.registerBeforeRender(() => {
-        let sunRadians = (sunOrientation / 360) * 2 * Math.PI;
+        const sunRadians = (sunOrientation / 360) * 2 * Math.PI;
         sun.position = new BABYLON.Vector3(100 * Math.cos(sunRadians), 50, 100 * Math.sin(sunRadians));
         light.direction = sun.position.negate().normalize();
         earth.rotation.y += -engine.getDeltaTime() * rotationSpeed / 1e5;
