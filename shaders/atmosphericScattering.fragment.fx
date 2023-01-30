@@ -107,7 +107,7 @@ vec3 calculateLight(vec3 rayOrigin, vec3 rayDir, float rayLength) {
 
     vec3 samplePoint = rayOrigin; // first sampling point coming from camera ray
 
-    vec3 sunDir = normalize(sunPosition - samplePoint); // direction to the light source
+    vec3 sunDir = normalize(sunPosition - planetPosition); // direction to the light source
     
     vec3 wavelength = vec3(redWaveLength, greenWaveLength, blueWaveLength); // the wavelength that will be scattered (rgb so we get everything)
     vec3 scatteringCoeffs = pow(400.0 / wavelength.xyz, vec3(4.0)) * scatteringStrength; // the scattering is inversely proportional to the fourth power of the wave length
@@ -119,10 +119,14 @@ vec3 calculateLight(vec3 rayOrigin, vec3 rayDir, float rayLength) {
     for (int i = 0 ; i < POINTS_FROM_CAMERA ; i++) {
 
         float sunRayLengthInAtm = atmosphereRadius - length(samplePoint - planetPosition); // distance traveled by light through atmosphere from light source
-        float viewRayLengthInAtm = stepSize * float(i); // distance traveled by light through atmosphere from sample point to cameraPosition
-        
+        float t0, t1;
+        if(rayIntersectSphere(samplePoint, sunDir, planetPosition, atmosphereRadius, t0, t1)) {
+            sunRayLengthInAtm = t1;
+        }
+
         float sunRayOpticalDepth = opticalDepth(samplePoint, sunDir, sunRayLengthInAtm); // scattered from the sun to the point
         
+        float viewRayLengthInAtm = stepSize * float(i); // distance traveled by light through atmosphere from sample point to cameraPosition
         float viewRayOpticalDepth = opticalDepth(samplePoint, -rayDir, viewRayLengthInAtm); // scattered from the point to the camera
         
         vec3 transmittance = exp(-(sunRayOpticalDepth + viewRayOpticalDepth) * scatteringCoeffs); // exponential scattering with coefficients
@@ -136,8 +140,8 @@ vec3 calculateLight(vec3 rayOrigin, vec3 rayDir, float rayLength) {
 
     // scattering depends on the direction of the light ray and the view ray : it's the rayleigh phase function
     // https://glossary.ametsoc.org/wiki/Rayleigh_phase_function
-    float mu = dot(rayDir, sunDir);
-    float phaseRayleigh = 3.0 / (16.0 * PI) * (1.0 + mu * mu);
+    float costheta = dot(rayDir, sunDir);
+    float phaseRayleigh = 3.0 / (16.0 * PI) * (1.0 + costheta * costheta);
     
     inScatteredLight *= phaseRayleigh; // apply rayleigh pahse
     inScatteredLight *= sunIntensity; // multiply by the intensity of the sun
@@ -177,13 +181,13 @@ void main() {
 
     float maximumDistance = length(deepestPoint); // the maxium ray length due to occlusion
 
+    // this will account for the non perfect sphere shape of the planet
+    // as t0 is exactly the distance to the planet, while maximumDistance suffers from the 
+    // imperfect descretized and periodic geometry of the sphere
+    // DO NOT USE IF your planet has landmasses
     float t0, t1;
     if(rayIntersectSphere(cameraPosition, rayDir, planetPosition, planetRadius, t0, t1)) {
-        // this will account for the non perfect sphere shape of the planet
-        // as t0 is exactly the distance to the planet, while maximumDistance suffers from the 
-        // imperfect descretized geometry of the sphere
-        // Do not use this if your planet has landmasses
-        maximumDistance = t0;
+        if(maximumDistance > t0 - 1.0) maximumDistance = t0; // the -1.0 is to avoid some imprecision artifacts
     }
 
     vec3 finalColor = scatter(screenColor, cameraPosition, rayDir, maximumDistance); // the color to be displayed on the screen

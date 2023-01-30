@@ -16,14 +16,15 @@ freeCamera.keysDown.push(83); // s
 freeCamera.keysRight.push(68); // d
 freeCamera.keysUpward.push(32); // space
 freeCamera.keysDownward.push(16); // shift
-let light = new BABYLON.PointLight("light", BABYLON.Vector3.Zero(), scene);
 let sun = BABYLON.Mesh.CreateSphere("Sun", 32, 10, scene);
 let vls1 = new BABYLON.VolumetricLightScatteringPostProcess("trueLight", 1, freeCamera, sun, 100);
 let vls2 = new BABYLON.VolumetricLightScatteringPostProcess("trueLight2", 1, orbitalCamera, sun, 100);
 let sunMaterial = new BABYLON.StandardMaterial("sunMaterial", scene);
 sunMaterial.emissiveTexture = new BABYLON.Texture("../textures/sun.jpg", scene);
+sunMaterial.disableLighting = true;
 sun.material = sunMaterial;
-light.parent = sun;
+console.log(sun.position);
+let light = new BABYLON.DirectionalLight("light", BABYLON.Vector3.Zero(), scene);
 const planetRadius = 50;
 const atmosphereRadius = 55;
 let earth = BABYLON.Mesh.CreateSphere("Earth", 32, planetRadius * 2, scene);
@@ -33,7 +34,7 @@ earthMaterial.emissiveTexture = new BABYLON.Texture("../textures/night2.jpg", sc
 earthMaterial.specularTexture = new BABYLON.Texture("../textures/specular2.jpg", scene);
 earth.material = earthMaterial;
 // The important line
-let atmosphere = new AtmosphericScatteringPostProcess("atmosphere", earth, planetRadius, atmosphereRadius, sun, freeCamera, scene);
+let atmosphere = new AtmosphericScatteringPostProcess("atmosphere", earth, planetRadius, atmosphereRadius, sun, orbitalCamera, scene);
 function switchCamera(newCamera) {
     var _a;
     (_a = scene.activeCamera) === null || _a === void 0 ? void 0 : _a.detachControl(canvas);
@@ -114,11 +115,12 @@ window.addEventListener("resize", () => {
 });
 scene.executeWhenReady(() => {
     engine.loadingScreen.hideLoadingUI();
-    engine.runRenderLoop(() => {
+    scene.registerBeforeRender(() => {
         let sunRadians = (sunOrientation / 360) * 2 * Math.PI;
         sun.position = new BABYLON.Vector3(100 * Math.cos(sunRadians), 50, 100 * Math.sin(sunRadians));
+        light.direction = sun.position.negate().normalize();
         earth.rotation.y += -engine.getDeltaTime() * rotationSpeed / 1e5;
         cloudLayer.rotation.y += engine.getDeltaTime() * rotationSpeed / 5e5;
-        scene.render();
     });
+    engine.runRenderLoop(() => scene.render());
 });
