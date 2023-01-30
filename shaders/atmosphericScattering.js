@@ -38,7 +38,7 @@ class AtmosphericScatteringPostProcess extends BABYLON.PostProcess {
         this.sun = sun;
         this.planet = planet;
         this.setCamera(this.camera);
-        let depthRenderer = new BABYLON.DepthRenderer(scene);
+        let depthRenderer = scene.enableDepthRenderer(scene.activeCamera);
         scene.customRenderTargets.push(depthRenderer.getDepthMap());
         let depthMap = depthRenderer.getDepthMap();
         this.onApply = (effect) => {
