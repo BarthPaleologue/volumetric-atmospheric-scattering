@@ -23,8 +23,8 @@ class AtmosphericScatteringPostProcess extends BABYLON.PostProcess {
             "sunPosition",
             "cameraPosition",
 
-            "projection",
-            "view",
+            "inverseProjection",
+            "inverseView",
 
             "cameraNear",
             "cameraFar",
@@ -77,8 +77,8 @@ class AtmosphericScatteringPostProcess extends BABYLON.PostProcess {
 
             effect.setVector3("planetPosition", this.planet.absolutePosition);
 
-            effect.setMatrix("projection", this.camera.getProjectionMatrix());
-            effect.setMatrix("view", this.camera.getViewMatrix());
+            effect.setMatrix("inverseProjection", BABYLON.Matrix.Invert(this.camera.getProjectionMatrix()));
+            effect.setMatrix("inverseView", BABYLON.Matrix.Invert(this.camera.getViewMatrix()));
 
             effect.setFloat("cameraNear", camera.minZ);
             effect.setFloat("cameraFar", camera.maxZ);

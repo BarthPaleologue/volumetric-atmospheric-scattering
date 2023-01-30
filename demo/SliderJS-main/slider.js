@@ -61,4 +61,3 @@ export class Slider {
         this.container.remove();
     }
 }
-//# sourceMappingURL=slider.js.map

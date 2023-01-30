@@ -14,8 +14,8 @@ uniform sampler2D depthSampler; // the depth map of the camera
 uniform vec3 sunPosition; // position of the sun in world space
 uniform vec3 cameraPosition; // position of the camera in world space
 
-uniform mat4 projection; // camera's projection matrix
-uniform mat4 view; // camera's view matrix
+uniform mat4 inverseProjection; // camera's inverse projection matrix
+uniform mat4 inverseView; // camera's inverse view matrix
 
 uniform float cameraNear; // camera minZ
 uniform float cameraFar; // camera maxZ
@@ -46,8 +46,8 @@ float rand(vec2 co) {
 // compute the world position of a pixel from its uv coordinates
 vec3 worldFromUV(vec2 pos) {
     vec4 ndc = vec4(pos.xy * 2.0 - 1.0, -1.0, 1.0); // get ndc position -1 because i want every point in the near camera plane
-    vec4 posVS = inverse(projection) * ndc; // unproject the ndc coordinates : we are now in view space if i understand correctly
-    vec4 posWS = inverse(view) * vec4((posVS.xyz / posVS.w), 1.0); // then we use inverse view to get to world space, division by w to get actual coordinates
+    vec4 posVS = inverseProjection * ndc; // unproject the ndc coordinates : we are now in view space if i understand correctly
+    vec4 posWS = inverseView * vec4((posVS.xyz / posVS.w), 1.0); // then we use inverse view to get to world space, division by w to get actual coordinates
     return posWS.xyz; // the coordinates in world space
 }
 
