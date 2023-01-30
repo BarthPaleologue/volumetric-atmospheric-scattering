@@ -45,10 +45,10 @@ float rand(vec2 co) {
 
 // compute the world position of a pixel from its uv coordinates and depth
 vec3 worldFromUV(vec2 UV, float depth) {
-    vec4 ndc = vec4(UV * 2.0 - 1.0, 0.0, 1.0);
-    vec4 posVS = inverseProjection * ndc;
-    posVS.xyz *= remap(depth, 0.0, 1.0, cameraNear, cameraFar);
-    vec4 posWS = inverseView * vec4(posVS.xyz, 1.0);
+    vec4 ndc = vec4(UV * 2.0 - 1.0, 0.0, 1.0); // normalized device coordinates for only the UV
+    vec4 posVS = inverseProjection * ndc; // unproject the pixel to view space
+    posVS.xyz *= remap(depth, 0.0, 1.0, cameraNear, cameraFar); // now account for the depth (we can't do it before because of the perspective projection being non uniform)
+    vec4 posWS = inverseView * vec4(posVS.xyz, 1.0); // unproject the point to world space
     return posWS.xyz;
 }
 
@@ -165,18 +165,26 @@ vec3 scatter(vec3 originalColor, vec3 rayOrigin, vec3 rayDir, float maximumDista
 
 
 void main() {
-    vec3 screenColor = texture2D(textureSampler, vUV).rgb; // the current screen color
+    vec3 screenColor = texture2D(textureSampler, vUV).rgb;
 
     float depth = texture2D(depthSampler, vUV).r; // the depth corresponding to the pixel in the depth map
     
     // deepest physical point from the camera in the direction of the pixel (occlusion)
     // if there is no occlusion, the deepest point is on the far plane
     vec3 deepestPoint = worldFromUV(vUV, depth) - cameraPosition;
+    
+    vec3 rayDir = normalize(deepestPoint); // normalized direction of the ray
 
     float maximumDistance = length(deepestPoint); // the maxium ray length due to occlusion
-    maximumDistance += rand(vUV) / 10.0; // adding a bit of randomness to avoid geometry artifacts
 
-    vec3 rayDir = normalize(deepestPoint); // normalized direction of the ray
+    float t0, t1;
+    if(rayIntersectSphere(cameraPosition, rayDir, planetPosition, planetRadius, t0, t1)) {
+        // this will account for the non perfect sphere shape of the planet
+        // as t0 is exactly the distance to the planet, while maximumDistance suffers from the 
+        // imperfect descretized geometry of the sphere
+        // Do not use this if your planet has landmasses
+        maximumDistance = t0;
+    }
 
     vec3 finalColor = scatter(screenColor, cameraPosition, rayDir, maximumDistance); // the color to be displayed on the screen
 
