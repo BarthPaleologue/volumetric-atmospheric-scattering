@@ -39,7 +39,7 @@ void main() {
     cloudColor *= pow(max(ndl, 0.0), 0.5);
     // cloud alpha is 0 when cloudColor is black and 1 when cloudColor is white
     float cloudAlpha = dot(cloudColor, vec3(1.0)) / 3.0;
-    //cloudAlpha = pow(cloudAlpha, 0.5); // make cloud alpha more visible (optional)
+    cloudAlpha = pow(cloudAlpha, 0.5); // make cloud alpha more visible (optional)
 
     finalColor = cloudColor * cloudAlpha + finalColor * (1.0 - cloudAlpha);
 
