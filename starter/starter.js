@@ -8,11 +8,11 @@ scene.clearColor = new BABYLON.Color4(0, 0, 0, 1);
 const orbitalCamera = new BABYLON.ArcRotateCamera("orbitalCamera", Math.PI / 2, Math.PI / 3, 400, BABYLON.Vector3.Zero(), scene);
 orbitalCamera.attachControl(canvas);
 // Create a depth renderer so that we can use it to render the atmosphere correctly
-const depthRenderer = scene.enableDepthRenderer(orbitalCamera);
+const depthRenderer = scene.enableDepthRenderer(orbitalCamera, false, true);
 scene.customRenderTargets.push(depthRenderer.getDepthMap());
 const light = new BABYLON.DirectionalLight("light", new BABYLON.Vector3(-5, -2, 0), scene);
 const sun = new BABYLON.TransformNode("sun", scene);
-sun.position = new BABYLON.Vector3(5, 2, 0);
+sun.position = light.direction.negate();
 const planetRadius = 100;
 const atmosphereRadius = 110;
 const earth = BABYLON.Mesh.CreateSphere("Earth", 32, planetRadius * 2, scene);
