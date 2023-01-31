@@ -17,7 +17,7 @@ You can find a demo at https://barthpaleologue.github.io/volumetric-atmospheric-
 You need to include the ```./shaders/atmosphericScattering.js``` file in your html code after babylonjs and before your main script, then simply call :
 
 ```js
-let atmosphere = new AtmosphericScatteringPostProcess("atmospherePostProcess", planetMesh, planetRadius, atmosphereRadius, pointLight, camera, scene);
+let atmosphere = new AtmosphericScatteringPostProcess("atmospherePostProcess", planetMesh, planetRadius, atmosphereRadius, pointLight, camera, depthRenderer, scene);
 ```
 
 The postprocess can be tweaked using many settings that are grouped in the interface ```AtmosphericScatteringPostProcess.settings``` : 

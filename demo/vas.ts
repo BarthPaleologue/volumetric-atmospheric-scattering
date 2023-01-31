@@ -11,24 +11,34 @@ engine.loadingScreen.displayLoadingUI();
 const scene = new BABYLON.Scene(engine);
 scene.clearColor = new BABYLON.Color4(0, 0, 0, 1);
 
-const orbitalCamera = new BABYLON.ArcRotateCamera("orbitalCamera", Math.PI / 2, Math.PI / 3, 200, BABYLON.Vector3.Zero(), scene);
+const planetRadius = 50;
+const atmosphereRadius = planetRadius * 1.1;
 
-const freeCamera = new BABYLON.FreeCamera("freeCamera", new BABYLON.Vector3(0, 0, -200), scene);
+const orbitalCamera = new BABYLON.ArcRotateCamera("orbitalCamera", Math.PI / 2, Math.PI / 3, planetRadius * 4, BABYLON.Vector3.Zero(), scene);
+orbitalCamera.wheelPrecision = 100 / planetRadius;
+orbitalCamera.maxZ = planetRadius * 1000;
+//orbitalCamera.maxZ = planetRadius * 720000;
+//orbitalCamera.minZ = 0.000001;
+//orbitalCamera.fov = 3.14 * 17 / 180;
+
+const freeCamera = new BABYLON.FreeCamera("freeCamera", new BABYLON.Vector3(0, 0, -planetRadius * 4), scene);
 freeCamera.keysUp.push(90, 87); // z,w
 freeCamera.keysLeft.push(81, 65); // q,a
 freeCamera.keysDown.push(83); // s
 freeCamera.keysRight.push(68); // d
 freeCamera.keysUpward.push(32); // space
 freeCamera.keysDownward.push(16); // shift
+freeCamera.speed = planetRadius / 20;
+freeCamera.maxZ = planetRadius * 1000;
 
 
-const depthRendererOrbital = scene.enableDepthRenderer(orbitalCamera);
+const depthRendererOrbital = scene.enableDepthRenderer(orbitalCamera, false, true);
 scene.customRenderTargets.push(depthRendererOrbital.getDepthMap());
 
-const depthRendererFree = scene.enableDepthRenderer(freeCamera);
+const depthRendererFree = scene.enableDepthRenderer(freeCamera, false, true);
 scene.customRenderTargets.push(depthRendererFree.getDepthMap());
 
-const sun = BABYLON.Mesh.CreateSphere("Sun", 32, 10, scene);
+const sun = BABYLON.Mesh.CreateSphere("Sun", 32, planetRadius / 5, scene);
 new BABYLON.VolumetricLightScatteringPostProcess("trueLight", 1, freeCamera, sun, 100);
 new BABYLON.VolumetricLightScatteringPostProcess("trueLight2", 1, orbitalCamera, sun, 100);
 
@@ -38,9 +48,6 @@ sunMaterial.disableLighting = true;
 sun.material = sunMaterial;
 
 const light = new BABYLON.DirectionalLight("light", BABYLON.Vector3.Zero(), scene);
-
-const planetRadius = 50;
-const atmosphereRadius = 55;
 
 const earth = BABYLON.Mesh.CreateSphere("Earth", 32, planetRadius * 2, scene);
 
@@ -69,7 +76,7 @@ function switchCamera(newCamera: BABYLON.Camera) {
 switchCamera(atmosphere.camera);
 
 // cloud layer just above ground level
-const epsilon = 1e-1;
+const epsilon = planetRadius / 100;
 const cloudLayer = BABYLON.Mesh.CreateSphere("clouds", 32, (planetRadius + epsilon) * 2, scene);
 const cloudMaterial = new BABYLON.StandardMaterial("cloudMaterial", scene);
 cloudMaterial.opacityTexture = new BABYLON.Texture("../textures/clouds4.jpg", scene);
@@ -88,7 +95,7 @@ new Slider("intensity", document.getElementById("intensity")!, 0, 40, atmosphere
     atmosphere.settings.intensity = val;
 });
 
-new Slider("atmosphereRadius", document.getElementById("atmosphereRadius")!, planetRadius + 1, 100, atmosphereRadius, (val: number) => {
+new Slider("atmosphereRadius", document.getElementById("atmosphereRadius")!, planetRadius + 1, 100, Math.round(atmosphereRadius), (val: number) => {
     atmosphere.settings.atmosphereRadius = val;
 });
 
@@ -126,6 +133,11 @@ let rotationSpeed = 1;
 new Slider("planetRotation", document.getElementById("planetRotation")!, 0, 20, rotationSpeed * 10, (val: number) => {
     rotationSpeed = (val / 10) ** 5;
 });
+
+new Slider("cameraFOV", document.getElementById("cameraFOV")!, 0, 180, Math.round(180 * orbitalCamera.fov / Math.PI), (val: number) => {
+    orbitalCamera.fov = Math.PI * val / 180;
+    freeCamera.fov = orbitalCamera.fov;
+});
 //#endregion
 
 document.getElementById("switchView")?.addEventListener("click", () => {
@@ -145,7 +157,7 @@ document.addEventListener("keydown", e => {
 });
 
 window.addEventListener("resize", () => {
-    canvas.width = window.innerWidth;
+    canvas.width = window.innerWidth - 300;
     canvas.height = window.innerHeight;
     engine.resize();
 });
@@ -154,9 +166,9 @@ scene.executeWhenReady(() => {
     engine.loadingScreen.hideLoadingUI();
 
     scene.registerBeforeRender(() => {
-        const sunRadians = (sunOrientation / 360) * 2 * Math.PI;
+        const sunRadians = (sunOrientation / 180) * Math.PI;
 
-        sun.position = new BABYLON.Vector3(100 * Math.cos(sunRadians), 50, 100 * Math.sin(sunRadians));
+        sun.position = new BABYLON.Vector3(Math.cos(sunRadians), 0.5, Math.sin(sunRadians)).scale(planetRadius * 5);
         light.direction = sun.position.negate().normalize();
 
         earth.rotation.y += -engine.getDeltaTime() * rotationSpeed / 1e5;

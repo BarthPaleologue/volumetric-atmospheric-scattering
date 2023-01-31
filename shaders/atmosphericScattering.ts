@@ -15,7 +15,7 @@ class AtmosphericScatteringPostProcess extends BABYLON.PostProcess {
     settings: AtmosphereSettings;
     camera: BABYLON.Camera;
     sun: BABYLON.TransformNode | BABYLON.Light;
-    planet: BABYLON.Mesh;
+    planet: BABYLON.TransformNode;
     depthRenderer: BABYLON.DepthRenderer;
 
     constructor(name: string, planet: BABYLON.Mesh, planetRadius: number, atmosphereRadius: number, sun: BABYLON.TransformNode | BABYLON.Light, camera: BABYLON.Camera, depthRenderer: BABYLON.DepthRenderer, scene: BABYLON.Scene) {
