@@ -36,7 +36,7 @@ void main() {
 
     vec2 cloudUV = vUV - vec2(time * 0.0005, 0.0);
     vec3 cloudColor = texture2D(cloudTexture, cloudUV).rgb;
-    cloudColor *= pow(max(ndl, 0.0), 0.5);
+    cloudColor *= pow(max(0.9 * ndl + 0.1, 0.0), 0.5);
     // cloud alpha is 0 when cloudColor is black and 1 when cloudColor is white
     float cloudAlpha = dot(cloudColor, vec3(1.0)) / 3.0;
     cloudAlpha = pow(cloudAlpha, 0.5); // make cloud alpha more visible (optional)

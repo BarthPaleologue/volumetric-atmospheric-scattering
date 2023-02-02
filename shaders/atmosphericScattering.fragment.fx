@@ -38,11 +38,6 @@ float remap(float value, float low1, float high1, float low2, float high2) {
     return low2 + (value - low1) * (high2 - low2) / (high1 - low1);
 }
 
-// eventually will be useful to remove some artefacts
-float rand(vec2 co) {
-    return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
-}
-
 // compute the world position of a pixel from its uv coordinates and depth
 vec3 worldFromUV(vec2 UV, float depth) {
     vec4 ndc = vec4(UV * 2.0 - 1.0, 0.0, 1.0); // normalized device coordinates for only the UV
@@ -79,6 +74,10 @@ bool rayIntersectSphere(vec3 rayOrigin, vec3 rayDir, vec3 spherePosition, float 
 float densityAtPoint(vec3 densitySamplePoint) {
     float heightAboveSurface = length(densitySamplePoint - planetPosition) - planetRadius; // actual height above surface
     float height01 = heightAboveSurface / (atmosphereRadius - planetRadius); // normalized height between 0 and 1
+    
+    // cheat for large scale planets by Yincognyto https://github.com/BarthPaleologue/volumetric-atmospheric-scattering/issues/6#issuecomment-1413049219
+    height01 = remap(height01, 0.0, 1.0, log(planetRadius / 50.0) / (7.0 * log(10.0)), 1.0);
+    
     float localDensity = densityModifier * exp(-height01 * falloffFactor); // density with exponential falloff
     localDensity *= (1.0 - height01); // make it 0 at maximum height
 
@@ -177,9 +176,9 @@ void main() {
     // if there is no occlusion, the deepest point is on the far plane
     vec3 deepestPoint = worldFromUV(vUV, depth) - cameraPosition;
     
-    vec3 rayDir = normalize(deepestPoint); // normalized direction of the ray
-
     float maximumDistance = length(deepestPoint); // the maxium ray length due to occlusion
+
+    vec3 rayDir = deepestPoint / maximumDistance; // normalized direction of the ray
 
     // this will account for the non perfect sphere shape of the planet
     // as t0 is exactly the distance to the planet, while maximumDistance suffers from the 
