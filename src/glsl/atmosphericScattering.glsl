@@ -1,3 +1,11 @@
+/*
+* Volumetric Atmospheric Scattering Shader for WebGL
+* Adapted and improved from Sebastian Lague's work
+* By Barthélemy Paléologue
+* 
+* Official repo: https://github.com/BarthPaleologue/volumetric-atmospheric-scattering
+*/
+
 precision highp float;
 
 #define PI 3.1415926535897932
