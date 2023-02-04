@@ -1,5 +1,7 @@
 # Volumetric Atmospheric Scattering
 
+[![NodeJS with Webpack](https://github.com/BarthPaleologue/volumetric-atmospheric-scattering/actions/workflows/webpack.yml/badge.svg)](https://github.com/BarthPaleologue/volumetric-atmospheric-scattering/actions/workflows/webpack.yml)
+[![ESLint](https://github.com/BarthPaleologue/volumetric-atmospheric-scattering/actions/workflows/eslint.yml/badge.svg)](https://github.com/BarthPaleologue/volumetric-atmospheric-scattering/actions/workflows/eslint.yml)
 [![pages-build-deployment](https://github.com/BarthPaleologue/volumetric-atmospheric-scattering/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/BarthPaleologue/volumetric-atmospheric-scattering/actions/workflows/pages/pages-build-deployment)
 [![CodeQL](https://github.com/BarthPaleologue/volumetric-atmospheric-scattering/actions/workflows/codeql.yml/badge.svg)](https://github.com/BarthPaleologue/volumetric-atmospheric-scattering/actions/workflows/codeql.yml)
 [![License](https://img.shields.io/github/license/BarthPaleologue/volumetric-atmospheric-scattering)](./LICENSE)
