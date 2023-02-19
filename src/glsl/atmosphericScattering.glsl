@@ -83,9 +83,6 @@ float densityAtPoint(vec3 densitySamplePoint) {
     float heightAboveSurface = length(densitySamplePoint - planetPosition) - planetRadius; // actual height above surface
     float height01 = heightAboveSurface / (atmosphereRadius - planetRadius); // normalized height between 0 and 1
     
-    // cheat for large scale planets by Yincognyto https://github.com/BarthPaleologue/volumetric-atmospheric-scattering/issues/6#issuecomment-1413049219
-    height01 = remap(height01, 0.0, 1.0, log(planetRadius / 50.0) / (7.0 * log(10.0)), 1.0);
-    
     float localDensity = densityModifier * exp(-height01 * falloffFactor); // density with exponential falloff
     localDensity *= (1.0 - height01); // make it 0 at maximum height
 
@@ -117,7 +114,9 @@ vec3 calculateLight(vec3 rayOrigin, vec3 rayDir, float rayLength) {
     vec3 sunDir = normalize(sunPosition - planetPosition); // direction to the light source
     
     vec3 wavelength = vec3(redWaveLength, greenWaveLength, blueWaveLength); // the wavelength that will be scattered (rgb so we get everything)
-    vec3 scatteringCoeffs = pow(400.0 / wavelength.xyz, vec3(4.0)) * scatteringStrength; // the scattering is inversely proportional to the fourth power of the wave length
+    vec3 scatteringCoeffs = pow(1063.0 / wavelength.xyz, vec3(4.0)) * scatteringStrength; // the scattering is inversely proportional to the fourth power of the wave length;
+    // about the 1063, it is just a constant that makes the scattering look good
+    scatteringCoeffs /= planetRadius; // Scale invariance by Yincognyto https://github.com/BarthPaleologue/volumetric-atmospheric-scattering/issues/6#issuecomment-1432409930
 
     float stepSize = rayLength / (float(POINTS_FROM_CAMERA) - 1.0); // the ray length between sample points
 

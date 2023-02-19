@@ -34,7 +34,7 @@ const scene = new Scene(engine);
 scene.clearColor = new Color4(0, 0, 0, 1);
 scene.performancePriority = ScenePerformancePriority.Intermediate;
 
-const planetRadius = 50;
+const planetRadius = 1;
 const atmosphereRadius = planetRadius * 1.1;
 
 const orbitalCamera = new ArcRotateCamera("orbitalCamera", Math.PI / 2, Math.PI / 3, planetRadius * 4, Vector3.Zero(), scene);
