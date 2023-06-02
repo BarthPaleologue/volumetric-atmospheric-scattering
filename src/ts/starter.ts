@@ -1,4 +1,14 @@
-import { Engine, Scene, Vector3, ArcRotateCamera, DirectionalLight, Color4, StandardMaterial, Texture, MeshBuilder } from "@babylonjs/core";
+import { Engine } from "@babylonjs/core/Engines/engine";
+import { Scene } from "@babylonjs/core/scene";
+import { ArcRotateCamera } from "@babylonjs/core/Cameras/arcRotateCamera";
+import { Color4 } from "@babylonjs/core/Maths/math.color";
+import { Vector3 } from "@babylonjs/core/Maths/math.vector";
+import { DirectionalLight } from "@babylonjs/core/Lights/directionalLight";
+import { MeshBuilder } from "@babylonjs/core/Meshes/meshBuilder";
+import { StandardMaterial } from "@babylonjs/core/Materials/standardMaterial";
+import { Texture } from "@babylonjs/core/Materials/Textures/texture";
+
+import "@babylonjs/core/Loading/loadingScreen";
 
 import { AtmosphericScatteringPostProcess } from "./atmosphericScattering";
 

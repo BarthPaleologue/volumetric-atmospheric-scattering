@@ -1,6 +1,6 @@
 {
   "devDependencies": {
-    "@babylonjs/core": "^5.39.0",
+    "@babylonjs/core": "^6.6.0",
     "@typescript-eslint/eslint-plugin": "^5.30.5",
     "@typescript-eslint/parser": "^5.30.5",
     "@webpack-cli/generators": "^1.1.0",

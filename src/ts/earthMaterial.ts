@@ -1,4 +1,9 @@
-import { ShaderMaterial, Effect, Scene, Texture, TransformNode, Vector3 } from "@babylonjs/core";
+import { ShaderMaterial } from "@babylonjs/core/Materials/shaderMaterial";
+import { TransformNode } from "@babylonjs/core/Meshes/transformNode";
+import { Scene } from "@babylonjs/core/scene";
+import { Texture } from "@babylonjs/core/Materials/Textures/texture";
+import { Vector3 } from "@babylonjs/core/Maths/math.vector";
+import { Effect } from "@babylonjs/core/Materials/effect";
 
 import diffuseTexture from "../assets/earth.jpg";
 import emissiveTexture from "../assets/night2.jpg";

@@ -1,33 +1,39 @@
-import {
-    Engine,
-    Scene,
-    ArcRotateCamera,
-    FreeCamera,
-    Color4,
-    Vector3,
-    VolumetricLightScatteringPostProcess,
-    StandardMaterial,
-    Texture,
-    DirectionalLight,
-    Camera,
-    Tools,
-    MeshBuilder,
-    ScenePerformancePriority
-} from "@babylonjs/core";
+import { EngineFactory } from "@babylonjs/core/Engines/engineFactory";
+import { WebGPUEngine } from "@babylonjs/core/Engines/webgpuEngine";
+import { Scene, ScenePerformancePriority } from "@babylonjs/core/scene";
+import { Color4 } from "@babylonjs/core/Maths/math.color";
+import { ArcRotateCamera } from "@babylonjs/core/Cameras/arcRotateCamera";
+import { Vector3 } from "@babylonjs/core/Maths/math.vector";
+import { FreeCamera } from "@babylonjs/core/Cameras/freeCamera";
+import { MeshBuilder } from "@babylonjs/core/Meshes/meshBuilder";
+import { VolumetricLightScatteringPostProcess } from "@babylonjs/core/PostProcesses/volumetricLightScatteringPostProcess";
+import { StandardMaterial } from "@babylonjs/core/Materials/standardMaterial";
+import { Texture } from "@babylonjs/core/Materials/Textures/texture";
+import { DirectionalLight } from "@babylonjs/core/Lights/directionalLight";
+import { Camera } from "@babylonjs/core/Cameras/camera";
+import { Tools } from "@babylonjs/core/Misc/tools";
+
+import "@babylonjs/core/Engines/WebGPU/Extensions/engine.uniformBuffer";
+import "@babylonjs/core/Engines/WebGPU/Extensions/engine.renderTarget";
+import "@babylonjs/core/Loading/loadingScreen";
 
 import { AtmosphericScatteringPostProcess } from "./atmosphericScattering";
-
 import sunTexture from "../assets/sun.jpg";
 
 import "../scss/style.scss";
 import { Sliders } from "./sliders";
 import { EarthMaterial } from "./earthMaterial";
 
+
 const canvas = document.getElementById("renderer") as HTMLCanvasElement;
 canvas.width = window.innerWidth - 300;
 canvas.height = window.innerHeight;
 
-const engine = new Engine(canvas);
+const engine = await EngineFactory.CreateAsync(canvas, {});
+
+if (engine instanceof WebGPUEngine) document.getElementById("webgl")?.remove();
+else document.getElementById("webgpu")?.remove();
+
 engine.loadingScreen.displayLoadingUI();
 
 const scene = new Scene(engine);
@@ -39,7 +45,8 @@ const atmosphereRadius = planetRadius * 1.1;
 
 const orbitalCamera = new ArcRotateCamera("orbitalCamera", Math.PI / 2, Math.PI / 3, planetRadius * 4, Vector3.Zero(), scene);
 orbitalCamera.wheelPrecision = 100 / planetRadius;
-orbitalCamera.lowerRadiusLimit = planetRadius * 1.1;
+orbitalCamera.lowerRadiusLimit = planetRadius * 1.5;
+orbitalCamera.minZ = 0.1;
 orbitalCamera.maxZ = planetRadius * 1000;
 
 const freeCamera = new FreeCamera("freeCamera", new Vector3(0, 0, -planetRadius * 4), scene);
@@ -50,6 +57,7 @@ freeCamera.keysRight.push(68); // d
 freeCamera.keysUpward.push(32); // space
 freeCamera.keysDownward.push(16); // shift
 freeCamera.speed = planetRadius / 20;
+freeCamera.minZ = 0.1;
 freeCamera.maxZ = planetRadius * 1000;
 
 const depthRendererOrbital = scene.enableDepthRenderer(orbitalCamera, false, true);
@@ -111,7 +119,7 @@ document.addEventListener("keydown", (e) => {
 window.addEventListener("resize", () => {
     canvas.width = window.innerWidth - 300;
     canvas.height = window.innerHeight;
-    engine.resize();
+    engine.resize(true);
 });
 
 scene.executeWhenReady(() => {

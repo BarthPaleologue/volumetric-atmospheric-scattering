@@ -79,6 +79,10 @@ const config = {
     },
     resolve: {
         extensions: [".tsx", ".ts", ".js"]
+    }, 
+
+    experiments: {
+        topLevelAwait: true
     }
 };
 

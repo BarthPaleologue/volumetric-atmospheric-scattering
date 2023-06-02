@@ -1,4 +1,14 @@
-import { PostProcess, Camera, TransformNode, Light, DepthRenderer, Mesh, Texture, Effect, Matrix, Scene } from "@babylonjs/core";
+import { Camera } from "@babylonjs/core/Cameras/camera";
+import { Light } from "@babylonjs/core/Lights/light";
+import { Texture } from "@babylonjs/core/Materials/Textures/texture";
+import { Effect } from "@babylonjs/core/Materials/effect";
+import { Matrix } from "@babylonjs/core/Maths/math";
+import { Mesh } from "@babylonjs/core/Meshes/mesh";
+import { TransformNode } from "@babylonjs/core/Meshes/transformNode";
+import { PostProcess } from "@babylonjs/core/PostProcesses/postProcess";
+import { Scene } from "@babylonjs/core/scene";
+import { DepthRenderer } from "@babylonjs/core/Rendering/depthRenderer";
+import "@babylonjs/core/Rendering/depthRendererSceneComponent";
 
 import atmosphereFragment from "../glsl/atmosphericScattering.glsl";
 

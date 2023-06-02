@@ -1,7 +1,7 @@
 import { Slider } from "handle-sliderjs";
 import { AtmosphericScatteringPostProcess } from "./atmosphericScattering";
-import { Scene } from "@babylonjs/core";
 import "handle-sliderjs/dist/css/style2.css";
+import { Scene } from "@babylonjs/core/scene";
 
 export class Sliders {
     private sunOrientation = 180;

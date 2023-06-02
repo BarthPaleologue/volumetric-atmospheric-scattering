@@ -40,4 +40,27 @@ body {
     #renderer {
         z-index: 1;
     }
+
+    #toolbar {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        display: flex;
+        column-gap: 10px;
+        padding: 10px;
+        height: 50px;
+
+        a {
+            flex: 1;
+            cursor: pointer;
+            transition: .2s;
+            &:hover {
+                transform: scale(1.1);
+            }
+
+            img {
+                height: 100%;
+            }
+        }
+    }
 }

@@ -7,7 +7,7 @@
 [![License](https://img.shields.io/github/license/BarthPaleologue/volumetric-atmospheric-scattering)](./LICENSE)
 
 
-A simple implementation of volumetric atmospheric scattering using BabylonJS. All you need are two files and two lines of code!
+A simple WebGPU and WebGL implementation of volumetric atmospheric scattering using BabylonJS. All you need are two files and two lines of code!
 
 ## Pictures
 
@@ -19,6 +19,8 @@ A simple implementation of volumetric atmospheric scattering using BabylonJS. Al
 ## Online demo
 
 You can find a demo at https://barthpaleologue.github.io/volumetric-atmospheric-scattering/dist/
+
+You can know the current backend by looking at the bottom left corner of the screen, the logo will either be that of WebGL or WebGPU.
 
 ## How to use
 
