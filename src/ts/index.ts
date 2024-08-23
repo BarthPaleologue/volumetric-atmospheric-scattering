@@ -13,8 +13,7 @@ import { DirectionalLight } from "@babylonjs/core/Lights/directionalLight";
 import { Camera } from "@babylonjs/core/Cameras/camera";
 import { Tools } from "@babylonjs/core/Misc/tools";
 
-import "@babylonjs/core/Engines/WebGPU/Extensions/engine.uniformBuffer";
-import "@babylonjs/core/Engines/WebGPU/Extensions/engine.renderTarget";
+import "@babylonjs/core/Engines/WebGPU/Extensions/";
 import "@babylonjs/core/Loading/loadingScreen";
 
 import { AtmosphericScatteringPostProcess } from "./atmosphericScattering";
