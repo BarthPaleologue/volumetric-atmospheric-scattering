@@ -12,8 +12,8 @@ export class Sliders {
             atmosphere.settings.intensity = val;
         });
 
-        new Slider("atmosphereRadius", document.getElementById("atmosphereRadius")!, planetRadius + 1, 100, Math.round(atmosphereRadius), (val: number) => {
-            atmosphere.settings.atmosphereRadius = val;
+        new Slider("atmosphereRadius", document.getElementById("atmosphereRadius")!, planetRadius * 100 + 1, 300, Math.round(atmosphereRadius * 100), (val: number) => {
+            atmosphere.settings.atmosphereRadius = val / 100;
         });
 
         new Slider("scatteringStrength", document.getElementById("scatteringStrength")!, 0, 40, atmosphere.settings.scatteringStrength * 10, (val: number) => {
