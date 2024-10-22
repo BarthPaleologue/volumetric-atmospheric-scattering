@@ -39,7 +39,7 @@ uniform float mieHeight; // height falloff of mie scattering (in meters)
 uniform vec3 mieCoeffs; // mie scattering coefficients
 
 uniform float ozoneHeight; // height of ozone layer in meters above the surface
-uniform vec3 ozoneCoeffs; // ozone scattering coefficients
+uniform vec3 ozoneCoeffs; // ozone absorption coefficients
 uniform float ozoneFalloff; // ozone falloff around the ozone layer in meters
 
 uniform float sunIntensity; // controls atmosphere overall brightness
@@ -138,7 +138,7 @@ vec3 calculateLight(vec3 rayOrigin, vec3 rayDir, float rayLength, vec3 originalC
         float viewRayLengthInAtm = stepSize * float(i); // distance traveled by light through atmosphere from sample point to cameraPosition
         vec3 viewRayOpticalDepth = opticalDepth(samplePoint, -rayDir, viewRayLengthInAtm); // scattered from the point to the camera
         
-        // Now we need to calculate the attenuation
+        // Now we need to calculate the transmittance
         // this is essentially how much light reaches the current sample point due to scattering
         vec3 transmittance = exp(-rayleighCoeffs * (sunRayOpticalDepth.x + viewRayOpticalDepth.x) - mieCoeffs * (sunRayOpticalDepth.y + viewRayOpticalDepth.y) - ozoneCoeffs * (sunRayOpticalDepth.z + viewRayOpticalDepth.z));
 
