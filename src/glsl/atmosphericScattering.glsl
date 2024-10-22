@@ -9,7 +9,7 @@
 precision highp float;
 
 #define PI 3.1415926535897932
-#define POINTS_FROM_CAMERA 32 // number sample points along camera ray
+#define POINTS_FROM_CAMERA 16 // number sample points along camera ray
 #define OPTICAL_DEPTH_POINTS 8 // number sample points along light ray
 
 // varying
