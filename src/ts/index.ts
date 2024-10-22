@@ -133,11 +133,17 @@ scene.executeWhenReady(() => {
     engine.loadingScreen.hideLoadingUI();
 
     scene.registerBeforeRender(() => {
-        elapsedSeconds += (sliders.planetRotationSpeed * engine.getDeltaTime()) / 1000;
+        elapsedSeconds += (sliders.rotationSpeed * engine.getDeltaTime()) / 1000;
 
-        const sunRadians = (sliders.sunTheta / 180) * Math.PI;
+        const sunTheta = Tools.ToRadians(sliders.sunTheta);
+        const sunPhi = Tools.ToRadians(sliders.sunPhi);
 
-        sun.position = new Vector3(Math.cos(sunRadians), 0.3, Math.sin(sunRadians)).scale(planetRadius * 5);
+        sun.position = new Vector3(
+            Math.cos(sunTheta) * Math.cos(sunPhi),
+            Math.sin(sunPhi),
+            Math.sin(sunTheta) * Math.cos(sunPhi)
+        ).scaleInPlace(planetRadius * 5);
+
         light.direction = sun.position.negate().normalize();
 
         earth.rotation.y = -elapsedSeconds / 1e2;

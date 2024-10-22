@@ -6,8 +6,9 @@ import { Color3, Vector3 } from "@babylonjs/core/Maths/math";
 import { Tools } from "@babylonjs/core/Misc/tools";
 
 export class Sliders {
-    private sunOrientation = 80;
-    private rotationSpeed = 1;
+    sunTheta = 80;
+    sunPhi = 3;
+    rotationSpeed = 1;
 
     constructor(atmosphere: AtmosphericScatteringPostProcess, planetRadius: number, atmosphereRadius: number, scene: Scene) {
         new Slider("intensity", document.getElementById("intensity")!, 0, 40, atmosphere.settings.lightIntensity, (val: number) => {
@@ -19,8 +20,12 @@ export class Sliders {
             atmosphere.settings.atmosphereRadius = val * radiusConversionFactor;
         });
 
-        new Slider("sunOrientation", document.getElementById("sunOrientation")!, 1, 360, this.sunOrientation, (val: number) => {
-            this.sunOrientation = val;
+        new Slider("sunOrientation", document.getElementById("sunOrientation")!, 1, 360, this.sunTheta, (val: number) => {
+            this.sunTheta = val;
+        });
+
+        new Slider("sunElevation", document.getElementById("sunPhi")!, -90, 90, this.sunPhi, (val: number) => {
+            this.sunPhi = val;
         });
 
         new Slider("planetRotation", document.getElementById("planetRotation")!, 0, 20, this.rotationSpeed * 10, (val: number) => {
@@ -77,13 +82,5 @@ export class Sliders {
             const color01 = Color3.FromHexString(color);
             atmosphere.settings.ozoneAbsorptionCoefficients = new Vector3(color01.r, color01.g, color01.b).scaleInPlace(ozoneConversionFactor);
         });
-    }
-
-    get sunTheta() {
-        return this.sunOrientation;
-    }
-
-    get planetRotationSpeed() {
-        return this.rotationSpeed;
     }
 }
