@@ -120,6 +120,10 @@ document.addEventListener("keydown", (e) => {
     } else if (e.key == "c") {
         if (scene.activeCamera == freeCamera) switchCamera(orbitalCamera);
         else switchCamera(freeCamera);
+    } else if (e.key === "+") {
+        freeCamera.speed *= 1.2;
+    } else if (e.key === "-") {
+        freeCamera.speed /= 1.2;
     }
 });
 
