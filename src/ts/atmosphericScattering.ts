@@ -2,7 +2,7 @@ import { Camera } from "@babylonjs/core/Cameras/camera";
 import { Light } from "@babylonjs/core/Lights/light";
 import { Texture } from "@babylonjs/core/Materials/Textures/texture";
 import { Effect } from "@babylonjs/core/Materials/effect";
-import { Matrix } from "@babylonjs/core/Maths/math";
+import { Matrix, Vector3 } from "@babylonjs/core/Maths/math";
 import { Mesh } from "@babylonjs/core/Meshes/mesh";
 import { TransformNode } from "@babylonjs/core/Meshes/transformNode";
 import { PostProcess } from "@babylonjs/core/PostProcesses/postProcess";
@@ -32,9 +32,34 @@ export type AtmosphereSettings = {
     rayleighHeight: number;
 
     /**
+     * Rayleigh scattering coefficients (red, green, blue)
+     */
+    rayleighCoefficients: Vector3;
+
+    /**
      * Height falloff of mie scattering (bigger = slower decrease)
      */
     mieHeight: number;
+
+    /**
+     * Mie scattering coefficients (red, green, blue)
+     */
+    mieCoefficients: Vector3;
+
+    /**
+     * Height of the ozone layer in meters above the planet surface
+     */
+    ozoneHeight: number;
+
+    /**
+     * Ozone scattering coefficients (red, green, blue)
+     */
+    ozoneCoefficients: Vector3;
+
+    /**
+     * Ozone absorption falloff around the ozone layer height (in meters)
+     */
+    ozoneFalloff: number;
 
     /**
      * Intensity of the sun
@@ -57,7 +82,14 @@ const AtmosphereUniformNames = {
     ATMOSPHERE_RADIUS: "atmosphereRadius",
 
     RAYLEIGH_HEIGHT: "rayleighHeight",
+    RAYLEIGH_COEFFICIENTS: "rayleighCoeffs",
+
     MIE_HEIGHT: "mieHeight",
+    MIE_COEFFICIENTS: "mieCoeffs",
+
+    OZONE_HEIGHT: "ozoneHeight",
+    OZONE_COEFFICIENTS: "ozoneCoeffs",
+    OZONE_FALLOFF: "ozoneFalloff",
 
     SUN_INTENSITY: "sunIntensity",
 }
@@ -102,7 +134,12 @@ export class AtmosphericScatteringPostProcess extends PostProcess {
             planetRadius: planetRadius,
             atmosphereRadius: atmosphereRadius,
             rayleighHeight: 8e3,
+            rayleighCoefficients: new Vector3(5.8e-6, 13.5e-6, 33.1e-6),
             mieHeight: 1.2e3,
+            mieCoefficients: new Vector3(21e-6, 21e-6, 21e-6),
+            ozoneHeight: 25e3,
+            ozoneCoefficients: new Vector3(0.3e-6, 0.3e-6, 0.3e-6),
+            ozoneFalloff: 5e3,
             lightIntensity: 20
         };
 
@@ -130,7 +167,14 @@ export class AtmosphericScatteringPostProcess extends PostProcess {
             effect.setFloat(AtmosphereUniformNames.ATMOSPHERE_RADIUS, this.settings.atmosphereRadius);
 
             effect.setFloat(AtmosphereUniformNames.RAYLEIGH_HEIGHT, this.settings.rayleighHeight);
+            effect.setVector3(AtmosphereUniformNames.RAYLEIGH_COEFFICIENTS, this.settings.rayleighCoefficients);
+
             effect.setFloat(AtmosphereUniformNames.MIE_HEIGHT, this.settings.mieHeight);
+            effect.setVector3(AtmosphereUniformNames.MIE_COEFFICIENTS, this.settings.mieCoefficients);
+
+            effect.setFloat(AtmosphereUniformNames.OZONE_HEIGHT, this.settings.ozoneHeight);
+            effect.setVector3(AtmosphereUniformNames.OZONE_COEFFICIENTS, this.settings.ozoneCoefficients);
+            effect.setFloat(AtmosphereUniformNames.OZONE_FALLOFF, this.settings.ozoneFalloff);
 
             effect.setFloat(AtmosphereUniformNames.SUN_INTENSITY, this.settings.lightIntensity);
         });

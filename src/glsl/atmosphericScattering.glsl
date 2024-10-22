@@ -29,20 +29,20 @@ uniform float cameraNear; // camera minZ
 uniform float cameraFar; // camera maxZ
 
 uniform vec3 planetPosition; // planet position in world space
-uniform float planetRadius; // planet radius for height calculations
-uniform float atmosphereRadius; // atmosphere radius (calculate from planet center)
+uniform float planetRadius; // planet radius for height calculations (in meters)
+uniform float atmosphereRadius; // atmosphere radius (calculate from planet center) (in meters)
 
-uniform float rayleighHeight; // height falloff of rayleigh scattering
+uniform float rayleighHeight; // height falloff of rayleigh scattering (in meters)
+uniform vec3 rayleighCoeffs; // rayleigh scattering coefficients
 
-uniform float mieHeight; // height falloff of mie scattering
+uniform float mieHeight; // height falloff of mie scattering (in meters)
+uniform vec3 mieCoeffs; // mie scattering coefficients
+
+uniform float ozoneHeight; // height of ozone layer in meters above the surface
+uniform vec3 ozoneCoeffs; // ozone scattering coefficients
+uniform float ozoneFalloff; // ozone falloff around the ozone layer in meters
 
 uniform float sunIntensity; // controls atmosphere overall brightness
-
-vec3 mieCoeffs = vec3(21e-6);
-vec3 rayleighCoeffs = vec3(5.5e-6, 13.0e-6, 22.4e-6);
-vec3 ozoneCoeffs = vec3(2.04e-5, 4.97e-5, 1.95e-6);
-float ozoneHeight = 30e3;
-float ozoneFalloff = 4e3;
 
 // remap a value comprised between low1 and high1 to a value between low2 and high2
 float remap(float value, float low1, float high1, float low2, float high2) {
