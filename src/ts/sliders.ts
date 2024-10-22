@@ -41,6 +41,32 @@ export class Sliders {
             const color01 = Color3.FromHexString(color);
             atmosphere.settings.rayleighScatteringCoefficients = new Vector3(color01.r, color01.g, color01.b).scaleInPlace(rayleighConversionFactor);
         });
+
+        const mieScatteringColorPicker = document.getElementById("mieScattering") as HTMLInputElement;
+        const mieConversionFactor = 16e-6;
+        mieScatteringColorPicker.value = new Color3(
+            atmosphere.settings.mieScatteringCoefficients.x / mieConversionFactor,
+            atmosphere.settings.mieScatteringCoefficients.y / mieConversionFactor,
+            atmosphere.settings.mieScatteringCoefficients.z / mieConversionFactor)
+            .toHexString();
+        mieScatteringColorPicker.addEventListener("input", () => {
+            const color = mieScatteringColorPicker.value;
+            const color01 = Color3.FromHexString(color);
+            atmosphere.settings.mieScatteringCoefficients = new Vector3(color01.r, color01.g, color01.b).scaleInPlace(mieConversionFactor);
+        });
+
+        const ozoneAbsorptionColorPicker = document.getElementById("ozoneAbsorption") as HTMLInputElement;
+        const ozoneConversionFactor = 8e-6;
+        ozoneAbsorptionColorPicker.value = new Color3(
+            atmosphere.settings.ozoneAbsorptionCoefficients.x / ozoneConversionFactor,
+            atmosphere.settings.ozoneAbsorptionCoefficients.y / ozoneConversionFactor,
+            atmosphere.settings.ozoneAbsorptionCoefficients.z / ozoneConversionFactor)
+            .toHexString();
+        ozoneAbsorptionColorPicker.addEventListener("input", () => {
+            const color = ozoneAbsorptionColorPicker.value;
+            const color01 = Color3.FromHexString(color);
+            atmosphere.settings.ozoneAbsorptionCoefficients = new Vector3(color01.r, color01.g, color01.b).scaleInPlace(ozoneConversionFactor);
+        });
     }
 
     get sunTheta() {
