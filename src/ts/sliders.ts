@@ -57,6 +57,14 @@ export class Sliders {
             atmosphere.settings.mieScatteringCoefficients = new Vector3(color01.r, color01.g, color01.b).scaleInPlace(mieConversionFactor);
         });
 
+        new Slider("mieHeight", document.getElementById("mieHeightFalloff")!, 1, 100, atmosphere.settings.mieHeight / 1e2, (val: number) => {
+            atmosphere.settings.mieHeight = val * 1e2;
+        });
+
+        new Slider("mieAsymmetry", document.getElementById("mieAsymmetry")!, -100, 100, atmosphere.settings.mieAsymmetry * 100, (val: number) => {
+            atmosphere.settings.mieAsymmetry = val / 100;
+        });
+
         const ozoneAbsorptionColorPicker = document.getElementById("ozoneAbsorption") as HTMLInputElement;
         const ozoneConversionFactor = 8e-6;
         ozoneAbsorptionColorPicker.value = new Color3(
