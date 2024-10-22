@@ -78,12 +78,12 @@ sun.material = sunMaterial;
 
 const light = new DirectionalLight("light", Vector3.Zero(), scene);
 
-const earth = MeshBuilder.CreateSphere("Earth", { segments: 32, diameter: planetRadius * 2 }, scene);
+const earth = MeshBuilder.CreateSphere("Earth", { segments: 128, diameter: planetRadius * 2 }, scene);
 const earthMaterial = new EarthMaterial(earth, scene);
 earth.material = earthMaterial;
 
 freeCamera.position = earth.position.add(new Vector3(0, planetRadius + 3e3, 0));
-scene.onAfterRenderObservable.addOnce(() => freeCamera.setTarget(sun.position));
+scene.onAfterRenderObservable.addOnce(() => freeCamera.setTarget(sun.position.add(new Vector3(0, 2 * planetRadius, 0))));
 
 let elapsedSeconds = 0;
 
@@ -114,7 +114,7 @@ document.getElementById("switchView")?.addEventListener("click", () => {
 document.addEventListener("keydown", (e) => {
     if (e.key == "p") {
         // take screenshots
-        Tools.CreateScreenshotUsingRenderTarget(engine, scene.activeCamera!, { precision: 1 });
+        Tools.CreateScreenshotUsingRenderTarget(engine, scene.activeCamera!, { precision: 2 });
     } else if (e.key == "f") {
         console.log(Math.round(engine.getFps()));
     } else if (e.key == "c") {
