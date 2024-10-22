@@ -2,6 +2,7 @@ import { Slider } from "handle-sliderjs";
 import { AtmosphericScatteringPostProcess } from "./atmosphericScattering";
 import "handle-sliderjs/dist/css/style2.css";
 import { Scene } from "@babylonjs/core/scene";
+import { Color3, Vector3 } from "@babylonjs/core/Maths/math";
 
 export class Sliders {
     private sunOrientation = 180;
@@ -26,6 +27,19 @@ export class Sliders {
 
         new Slider("cameraFOV", document.getElementById("cameraFOV")!, 0, 180, Math.round((180 * scene.cameras[0].fov) / Math.PI), (val: number) => {
             for (const camera of scene.cameras) camera.fov = (Math.PI * val) / 180;
+        });
+
+        const rayleighScatteringColorPicker = document.getElementById("rayleighScattering") as HTMLInputElement;
+        const rayleighConversionFactor = 128e-6;
+        rayleighScatteringColorPicker.value = new Color3(
+            atmosphere.settings.rayleighScatteringCoefficients.x / rayleighConversionFactor, 
+            atmosphere.settings.rayleighScatteringCoefficients.y / rayleighConversionFactor, 
+            atmosphere.settings.rayleighScatteringCoefficients.z / rayleighConversionFactor)
+            .toHexString();
+        rayleighScatteringColorPicker.addEventListener("input", () => {
+            const color = rayleighScatteringColorPicker.value;
+            const color01 = Color3.FromHexString(color);
+            atmosphere.settings.rayleighScatteringCoefficients = new Vector3(color01.r, color01.g, color01.b).scaleInPlace(rayleighConversionFactor);
         });
     }
 
