@@ -12,7 +12,7 @@ export class Sliders {
             atmosphere.settings.lightIntensity = val;
         });
 
-        new Slider("atmosphereRadius", document.getElementById("atmosphereRadius")!, planetRadius, planetRadius * 3, Math.round(atmosphereRadius), (val: number) => {
+        new Slider("atmosphereRadius", document.getElementById("atmosphereRadius")!, planetRadius, planetRadius * 2, Math.round(atmosphereRadius), (val: number) => {
             atmosphere.settings.atmosphereRadius = val;
         });
 

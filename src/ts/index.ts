@@ -78,7 +78,7 @@ const earth = MeshBuilder.CreateSphere("Earth", { segments: 32, diameter: planet
 const earthMaterial = new EarthMaterial(earth, scene);
 earth.material = earthMaterial;
 
-let clock = 0;
+let elapsedSeconds = 0;
 
 // The important line
 const atmosphere = new AtmosphericScatteringPostProcess("atmosphere", earth, planetRadius, atmosphereRadius, sun, orbitalCamera, depthRendererOrbital, scene);
@@ -126,16 +126,16 @@ scene.executeWhenReady(() => {
     engine.loadingScreen.hideLoadingUI();
 
     scene.registerBeforeRender(() => {
-        clock += (sliders.planetRotationSpeed * engine.getDeltaTime()) / 1000;
+        elapsedSeconds += (sliders.planetRotationSpeed * engine.getDeltaTime()) / 1000;
 
         const sunRadians = (sliders.sunTheta / 180) * Math.PI;
 
         sun.position = new Vector3(Math.cos(sunRadians), 0.5, Math.sin(sunRadians)).scale(planetRadius * 5);
         light.direction = sun.position.negate().normalize();
 
-        earth.rotation.y = -clock / 1e2;
+        earth.rotation.y = -elapsedSeconds / 1e2;
 
-        earthMaterial.update(clock, sun.position);
+        earthMaterial.update(elapsedSeconds, sun.position);
     });
 
     engine.runRenderLoop(() => scene.render());
