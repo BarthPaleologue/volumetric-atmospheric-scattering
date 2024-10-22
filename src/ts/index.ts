@@ -23,7 +23,6 @@ import "../scss/style.scss";
 import { Sliders } from "./sliders";
 import { EarthMaterial } from "./earthMaterial";
 
-
 const canvas = document.getElementById("renderer") as HTMLCanvasElement;
 canvas.width = window.innerWidth - 300;
 canvas.height = window.innerHeight;

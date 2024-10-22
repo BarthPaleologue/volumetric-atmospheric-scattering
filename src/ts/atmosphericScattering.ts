@@ -16,8 +16,15 @@ const shaderName = "atmosphere";
 Effect.ShadersStore[`${shaderName}FragmentShader`] = atmosphereFragment;
 
 export type AtmosphereSettings = {
-    planetRadius: number; // changes the value used as the minimum height of the atmosphere
-    atmosphereRadius: number; // changes the value used as the maximum height of the atmosphere
+    /**
+     * Radius of the planet in meters
+     */
+    planetRadius: number;
+    
+    /**
+     * Radius of the atmosphere in meters (planetRadius + 100km in the case of Earth)
+     */
+    atmosphereRadius: number;
 
     /**
      * Height falloff of rayleigh scattering (bigger = slower decrease)
@@ -29,10 +36,13 @@ export type AtmosphereSettings = {
      */
     mieHeight: number;
 
-    lightIntensity: number; // changes the intensity of the colors scattered
+    /**
+     * Intensity of the sun
+     */
+    lightIntensity: number;
 }
 
-export const AtmosphereUniformNames = {
+const AtmosphereUniformNames = {
     SUN_POSITION: "sunPosition",
     CAMERA_POSITION: "cameraPosition",
 
@@ -52,7 +62,7 @@ export const AtmosphereUniformNames = {
     SUN_INTENSITY: "sunIntensity",
 }
 
-export const AtmosphereSamplerNames = {
+const AtmosphereSamplerNames = {
     TEXTURE: "textureSampler",
     DEPTH: "depthSampler"
 }
