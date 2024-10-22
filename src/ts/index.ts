@@ -45,7 +45,7 @@ scene.performancePriority = ScenePerformancePriority.Intermediate;
 const planetRadius = 6000e3;
 const atmosphereRadius = planetRadius + 100e3;
 
-const orbitalCamera = new ArcRotateCamera("orbitalCamera", Math.PI / 2, Math.PI / 3, planetRadius * 3, Vector3.Zero(), scene);
+const orbitalCamera = new ArcRotateCamera("orbitalCamera", 1.5*Math.PI / 2, Math.PI / 2, planetRadius * 3, Vector3.Zero(), scene);
 orbitalCamera.wheelPrecision = 100 / planetRadius;
 orbitalCamera.lowerRadiusLimit = planetRadius * 1.5;
 orbitalCamera.fov = Tools.ToRadians(60);
