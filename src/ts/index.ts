@@ -15,6 +15,8 @@ import { Tools } from "@babylonjs/core/Misc/tools";
 
 import "@babylonjs/core/Engines/WebGPU/Extensions/";
 import "@babylonjs/core/Loading/loadingScreen";
+import "@babylonjs/core/Misc/screenshotTools";
+import "@babylonjs/core/Engines";
 
 import { AtmosphericScatteringPostProcess } from "./atmosphericScattering";
 import sunTexture from "../assets/sun.jpg";
@@ -43,9 +45,10 @@ scene.performancePriority = ScenePerformancePriority.Intermediate;
 const planetRadius = 6000e3;
 const atmosphereRadius = planetRadius + 100e3;
 
-const orbitalCamera = new ArcRotateCamera("orbitalCamera", Math.PI / 2, Math.PI / 3, planetRadius * 4, Vector3.Zero(), scene);
+const orbitalCamera = new ArcRotateCamera("orbitalCamera", Math.PI / 2, Math.PI / 3, planetRadius * 3, Vector3.Zero(), scene);
 orbitalCamera.wheelPrecision = 100 / planetRadius;
 orbitalCamera.lowerRadiusLimit = planetRadius * 1.5;
+orbitalCamera.fov = Tools.ToRadians(60);
 orbitalCamera.minZ = planetRadius / 100;
 orbitalCamera.maxZ = planetRadius * 100;
 
@@ -56,8 +59,9 @@ freeCamera.keysDown.push(83); // s
 freeCamera.keysRight.push(68); // d
 freeCamera.keysUpward.push(32); // space
 freeCamera.keysDownward.push(16); // shift
-freeCamera.speed = planetRadius / 20;
-freeCamera.minZ = planetRadius / 100;
+freeCamera.fov = Tools.ToRadians(60);
+freeCamera.speed = planetRadius / 20e3;
+freeCamera.minZ = planetRadius / 10e3;
 freeCamera.maxZ = planetRadius * 100;
 
 const depthRendererOrbital = scene.enableDepthRenderer(orbitalCamera, false, true);
@@ -77,6 +81,9 @@ const light = new DirectionalLight("light", Vector3.Zero(), scene);
 const earth = MeshBuilder.CreateSphere("Earth", { segments: 32, diameter: planetRadius * 2 }, scene);
 const earthMaterial = new EarthMaterial(earth, scene);
 earth.material = earthMaterial;
+
+freeCamera.position = earth.position.add(new Vector3(0, planetRadius + 3e3, 0));
+scene.onAfterRenderObservable.addOnce(() => freeCamera.setTarget(sun.position));
 
 let elapsedSeconds = 0;
 
@@ -107,7 +114,7 @@ document.getElementById("switchView")?.addEventListener("click", () => {
 document.addEventListener("keydown", (e) => {
     if (e.key == "p") {
         // take screenshots
-        Tools.CreateScreenshotUsingRenderTarget(engine, scene.activeCamera!, { precision: 4 });
+        Tools.CreateScreenshotUsingRenderTarget(engine, scene.activeCamera!, { precision: 1 });
     } else if (e.key == "f") {
         console.log(Math.round(engine.getFps()));
     } else if (e.key == "c") {
@@ -130,7 +137,7 @@ scene.executeWhenReady(() => {
 
         const sunRadians = (sliders.sunTheta / 180) * Math.PI;
 
-        sun.position = new Vector3(Math.cos(sunRadians), 0.5, Math.sin(sunRadians)).scale(planetRadius * 5);
+        sun.position = new Vector3(Math.cos(sunRadians), 0.3, Math.sin(sunRadians)).scale(planetRadius * 5);
         light.direction = sun.position.negate().normalize();
 
         earth.rotation.y = -elapsedSeconds / 1e2;

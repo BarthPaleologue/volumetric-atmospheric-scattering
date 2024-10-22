@@ -3,9 +3,10 @@ import { AtmosphericScatteringPostProcess } from "./atmosphericScattering";
 import "handle-sliderjs/dist/css/style2.css";
 import { Scene } from "@babylonjs/core/scene";
 import { Color3, Vector3 } from "@babylonjs/core/Maths/math";
+import { Tools } from "@babylonjs/core/Misc/tools";
 
 export class Sliders {
-    private sunOrientation = 180;
+    private sunOrientation = 80;
     private rotationSpeed = 1;
 
     constructor(atmosphere: AtmosphericScatteringPostProcess, planetRadius: number, atmosphereRadius: number, scene: Scene) {
@@ -13,8 +14,9 @@ export class Sliders {
             atmosphere.settings.lightIntensity = val;
         });
 
-        new Slider("atmosphereRadius", document.getElementById("atmosphereRadius")!, planetRadius, planetRadius * 2, Math.round(atmosphereRadius), (val: number) => {
-            atmosphere.settings.atmosphereRadius = val;
+        const radiusConversionFactor = 1e3;
+        new Slider("atmosphereRadius", document.getElementById("atmosphereRadius")!, (planetRadius/radiusConversionFactor), (planetRadius/radiusConversionFactor) * 2, Math.round(atmosphereRadius/radiusConversionFactor), (val: number) => {
+            atmosphere.settings.atmosphereRadius = val * radiusConversionFactor;
         });
 
         new Slider("sunOrientation", document.getElementById("sunOrientation")!, 1, 360, this.sunOrientation, (val: number) => {
@@ -25,8 +27,8 @@ export class Sliders {
             this.rotationSpeed = (val / 10) ** 5;
         });
 
-        new Slider("cameraFOV", document.getElementById("cameraFOV")!, 0, 180, Math.round((180 * scene.cameras[0].fov) / Math.PI), (val: number) => {
-            for (const camera of scene.cameras) camera.fov = (Math.PI * val) / 180;
+        new Slider("cameraFOV", document.getElementById("cameraFOV")!, 0, 180, Tools.ToDegrees(scene.cameras[0].fov), (val: number) => {
+            for (const camera of scene.cameras) camera.fov = Tools.ToRadians(val);
         });
 
         const rayleighScatteringColorPicker = document.getElementById("rayleighScattering") as HTMLInputElement;
