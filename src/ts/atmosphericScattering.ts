@@ -33,9 +33,9 @@ export type AtmosphereSettings = {
 
     /**
      * Rayleigh scattering coefficients (red, green, blue)
-     * @see https://www.alanzucconi.com/2017/10/10/atmospheric-scattering-3/
+     * @see https://sebh.github.io/publications/egsr2020.pdf (Hillaire 2020)
      */
-    rayleighCoefficients: Vector3;
+    rayleighScatteringCoefficients: Vector3;
 
     /**
      * Height falloff of mie scattering (bigger = slower decrease)
@@ -45,7 +45,7 @@ export type AtmosphereSettings = {
     /**
      * Mie scattering coefficients (red, green, blue)
      */
-    mieCoefficients: Vector3;
+    mieScatteringCoefficients: Vector3;
 
     /**
      * Height of the ozone layer in meters above the planet surface
@@ -53,9 +53,10 @@ export type AtmosphereSettings = {
     ozoneHeight: number;
 
     /**
-     * Ozone scattering coefficients (red, green, blue)
+     * Ozone absorption coefficients (red, green, blue)
+     * @see https://sebh.github.io/publications/egsr2020.pdf (Hillaire 2020)
      */
-    ozoneCoefficients: Vector3;
+    ozoneAbsorptionCoefficients: Vector3;
 
     /**
      * Ozone absorption falloff around the ozone layer height (in meters)
@@ -135,11 +136,11 @@ export class AtmosphericScatteringPostProcess extends PostProcess {
             planetRadius: planetRadius,
             atmosphereRadius: atmosphereRadius,
             rayleighHeight: 8e3,
-            rayleighCoefficients: new Vector3(5.2e-6, 1.2e-5, 2.9e-5),
+            rayleighScatteringCoefficients: new Vector3(5.8e-6, 13.5e-6, 33.1e-6),
             mieHeight: 1.2e3,
-            mieCoefficients: new Vector3(21e-6, 21e-6, 21e-6),
+            mieScatteringCoefficients: new Vector3(3.9e-6, 3.9e-6, 3.9e-6),
             ozoneHeight: 25e3,
-            ozoneCoefficients: new Vector3(0.3e-6, 0.3e-6, 0.3e-6),
+            ozoneAbsorptionCoefficients: new Vector3(0.6e-6, 1.8e-6, 0.085e-6),
             ozoneFalloff: 5e3,
             lightIntensity: 20
         };
@@ -168,13 +169,13 @@ export class AtmosphericScatteringPostProcess extends PostProcess {
             effect.setFloat(AtmosphereUniformNames.ATMOSPHERE_RADIUS, this.settings.atmosphereRadius);
 
             effect.setFloat(AtmosphereUniformNames.RAYLEIGH_HEIGHT, this.settings.rayleighHeight);
-            effect.setVector3(AtmosphereUniformNames.RAYLEIGH_COEFFICIENTS, this.settings.rayleighCoefficients);
+            effect.setVector3(AtmosphereUniformNames.RAYLEIGH_COEFFICIENTS, this.settings.rayleighScatteringCoefficients);
 
             effect.setFloat(AtmosphereUniformNames.MIE_HEIGHT, this.settings.mieHeight);
-            effect.setVector3(AtmosphereUniformNames.MIE_COEFFICIENTS, this.settings.mieCoefficients);
+            effect.setVector3(AtmosphereUniformNames.MIE_COEFFICIENTS, this.settings.mieScatteringCoefficients);
 
             effect.setFloat(AtmosphereUniformNames.OZONE_HEIGHT, this.settings.ozoneHeight);
-            effect.setVector3(AtmosphereUniformNames.OZONE_COEFFICIENTS, this.settings.ozoneCoefficients);
+            effect.setVector3(AtmosphereUniformNames.OZONE_COEFFICIENTS, this.settings.ozoneAbsorptionCoefficients);
             effect.setFloat(AtmosphereUniformNames.OZONE_FALLOFF, this.settings.ozoneFalloff);
 
             effect.setFloat(AtmosphereUniformNames.SUN_INTENSITY, this.settings.lightIntensity);
