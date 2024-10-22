@@ -2,62 +2,93 @@ import { Slider } from "handle-sliderjs";
 import { AtmosphericScatteringPostProcess } from "./atmosphericScattering";
 import "handle-sliderjs/dist/css/style2.css";
 import { Scene } from "@babylonjs/core/scene";
+import { Color3, Vector3 } from "@babylonjs/core/Maths/math";
+import { Tools } from "@babylonjs/core/Misc/tools";
 
 export class Sliders {
-    private sunOrientation = 180;
-    private rotationSpeed = 1;
+    sunTheta = 80;
+    sunPhi = 3;
+    rotationSpeed = 1;
 
     constructor(atmosphere: AtmosphericScatteringPostProcess, planetRadius: number, atmosphereRadius: number, scene: Scene) {
-        new Slider("intensity", document.getElementById("intensity")!, 0, 40, atmosphere.settings.intensity, (val: number) => {
-            atmosphere.settings.intensity = val;
+        new Slider("intensity", document.getElementById("intensity")!, 0, 40, atmosphere.settings.lightIntensity, (val: number) => {
+            atmosphere.settings.lightIntensity = val;
         });
 
-        new Slider("atmosphereRadius", document.getElementById("atmosphereRadius")!, planetRadius * 100 + 1, 300, Math.round(atmosphereRadius * 100), (val: number) => {
-            atmosphere.settings.atmosphereRadius = val / 100;
+        const radiusConversionFactor = 1e3;
+        new Slider("atmosphereRadius", document.getElementById("atmosphereRadius")!, 0, ((atmosphereRadius-planetRadius)/radiusConversionFactor) * 5.0, Math.round((atmosphereRadius-planetRadius)/radiusConversionFactor), (val: number) => {
+            atmosphere.settings.atmosphereRadius = planetRadius + val * radiusConversionFactor;
         });
 
-        new Slider("scatteringStrength", document.getElementById("scatteringStrength")!, 0, 40, atmosphere.settings.scatteringStrength * 10, (val: number) => {
-            atmosphere.settings.scatteringStrength = val / 10;
+        new Slider("sunOrientation", document.getElementById("sunOrientation")!, 1, 360, this.sunTheta, (val: number) => {
+            this.sunTheta = val;
         });
 
-        new Slider("falloff", document.getElementById("falloff")!, 0, 30, atmosphere.settings.falloffFactor, (val: number) => {
-            atmosphere.settings.falloffFactor = val;
-        });
-
-        new Slider("density", document.getElementById("density")!, 0, 30, atmosphere.settings.densityModifier * 10, (val: number) => {
-            atmosphere.settings.densityModifier = val / 10;
-        });
-
-        new Slider("redWaveLength", document.getElementById("redWaveLength")!, 0, 1000, atmosphere.settings.redWaveLength, (val: number) => {
-            atmosphere.settings.redWaveLength = val;
-        });
-
-        new Slider("greenWaveLength", document.getElementById("greenWaveLength")!, 0, 1000, atmosphere.settings.greenWaveLength, (val: number) => {
-            atmosphere.settings.greenWaveLength = val;
-        });
-
-        new Slider("blueWaveLength", document.getElementById("blueWaveLength")!, 0, 1000, atmosphere.settings.blueWaveLength, (val: number) => {
-            atmosphere.settings.blueWaveLength = val;
-        });
-
-        new Slider("sunOrientation", document.getElementById("sunOrientation")!, 1, 360, this.sunOrientation, (val: number) => {
-            this.sunOrientation = val;
+        new Slider("sunElevation", document.getElementById("sunPhi")!, -90, 90, this.sunPhi, (val: number) => {
+            this.sunPhi = val;
         });
 
         new Slider("planetRotation", document.getElementById("planetRotation")!, 0, 20, this.rotationSpeed * 10, (val: number) => {
             this.rotationSpeed = (val / 10) ** 5;
         });
 
-        new Slider("cameraFOV", document.getElementById("cameraFOV")!, 0, 180, Math.round((180 * scene.cameras[0].fov) / Math.PI), (val: number) => {
-            for (const camera of scene.cameras) camera.fov = (Math.PI * val) / 180;
+        new Slider("cameraFOV", document.getElementById("cameraFOV")!, 0, 180, Tools.ToDegrees(scene.cameras[0].fov), (val: number) => {
+            for (const camera of scene.cameras) camera.fov = Tools.ToRadians(val);
         });
-    }
 
-    get sunTheta() {
-        return this.sunOrientation;
-    }
+        const rayleighScatteringColorPicker = document.getElementById("rayleighScattering") as HTMLInputElement;
+        const rayleighConversionFactor = 128e-6;
+        rayleighScatteringColorPicker.value = new Color3(
+            atmosphere.settings.rayleighScatteringCoefficients.x / rayleighConversionFactor, 
+            atmosphere.settings.rayleighScatteringCoefficients.y / rayleighConversionFactor, 
+            atmosphere.settings.rayleighScatteringCoefficients.z / rayleighConversionFactor)
+            .toHexString();
+        rayleighScatteringColorPicker.addEventListener("input", () => {
+            const color = rayleighScatteringColorPicker.value;
+            const color01 = Color3.FromHexString(color);
+            atmosphere.settings.rayleighScatteringCoefficients = new Vector3(color01.r, color01.g, color01.b).scaleInPlace(rayleighConversionFactor);
+        });
 
-    get planetRotationSpeed() {
-        return this.rotationSpeed;
+        new Slider("rayleighHeight", document.getElementById("rayleighHeightFalloff")!, 1, 300, atmosphere.settings.rayleighHeight / 1e2, (val: number) => {
+            atmosphere.settings.rayleighHeight = val * 1e2;
+        });
+
+        const mieScatteringColorPicker = document.getElementById("mieScattering") as HTMLInputElement;
+        const mieConversionFactor = 16e-6;
+        mieScatteringColorPicker.value = new Color3(
+            atmosphere.settings.mieScatteringCoefficients.x / mieConversionFactor,
+            atmosphere.settings.mieScatteringCoefficients.y / mieConversionFactor,
+            atmosphere.settings.mieScatteringCoefficients.z / mieConversionFactor)
+            .toHexString();
+        mieScatteringColorPicker.addEventListener("input", () => {
+            const color = mieScatteringColorPicker.value;
+            const color01 = Color3.FromHexString(color);
+            atmosphere.settings.mieScatteringCoefficients = new Vector3(color01.r, color01.g, color01.b).scaleInPlace(mieConversionFactor);
+        });
+
+        new Slider("mieHeight", document.getElementById("mieHeightFalloff")!, 1, 100, atmosphere.settings.mieHeight / 1e2, (val: number) => {
+            atmosphere.settings.mieHeight = val * 1e2;
+        });
+
+        new Slider("mieAsymmetry", document.getElementById("mieAsymmetry")!, -100, 100, atmosphere.settings.mieAsymmetry * 100, (val: number) => {
+            atmosphere.settings.mieAsymmetry = val / 100;
+        });
+
+        const ozoneAbsorptionColorPicker = document.getElementById("ozoneAbsorption") as HTMLInputElement;
+        const ozoneConversionFactor = 8e-6;
+        ozoneAbsorptionColorPicker.value = new Color3(
+            atmosphere.settings.ozoneAbsorptionCoefficients.x / ozoneConversionFactor,
+            atmosphere.settings.ozoneAbsorptionCoefficients.y / ozoneConversionFactor,
+            atmosphere.settings.ozoneAbsorptionCoefficients.z / ozoneConversionFactor)
+            .toHexString();
+        ozoneAbsorptionColorPicker.addEventListener("input", () => {
+            const color = ozoneAbsorptionColorPicker.value;
+            const color01 = Color3.FromHexString(color);
+            atmosphere.settings.ozoneAbsorptionCoefficients = new Vector3(color01.r, color01.g, color01.b).scaleInPlace(ozoneConversionFactor);
+        });
+
+        new Slider("ozoneLayerHeight", document.getElementById("ozoneLayerHeight")!, 1, 1000, atmosphere.settings.ozoneHeight / 1e2, (val: number) => {
+            atmosphere.settings.ozoneHeight = val * 1e2;
+        });
     }
 }

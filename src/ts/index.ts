@@ -15,6 +15,8 @@ import { Tools } from "@babylonjs/core/Misc/tools";
 
 import "@babylonjs/core/Engines/WebGPU/Extensions/";
 import "@babylonjs/core/Loading/loadingScreen";
+import "@babylonjs/core/Misc/screenshotTools";
+import "@babylonjs/core/Engines";
 
 import { AtmosphericScatteringPostProcess } from "./atmosphericScattering";
 import sunTexture from "../assets/sun.jpg";
@@ -23,12 +25,13 @@ import "../scss/style.scss";
 import { Sliders } from "./sliders";
 import { EarthMaterial } from "./earthMaterial";
 
-
 const canvas = document.getElementById("renderer") as HTMLCanvasElement;
 canvas.width = window.innerWidth - 300;
 canvas.height = window.innerHeight;
 
-const engine = await EngineFactory.CreateAsync(canvas, {});
+const engine = await EngineFactory.CreateAsync(canvas, {
+    useHighPrecisionMatrix: true,
+});
 
 if (engine instanceof WebGPUEngine) document.getElementById("webgl")?.remove();
 else document.getElementById("webgpu")?.remove();
@@ -39,14 +42,15 @@ const scene = new Scene(engine);
 scene.clearColor = new Color4(0, 0, 0, 1);
 scene.performancePriority = ScenePerformancePriority.Intermediate;
 
-const planetRadius = 1;
-const atmosphereRadius = planetRadius * 1.1;
+const planetRadius = 6000e3;
+const atmosphereRadius = planetRadius + 100e3;
 
-const orbitalCamera = new ArcRotateCamera("orbitalCamera", Math.PI / 2, Math.PI / 3, planetRadius * 4, Vector3.Zero(), scene);
+const orbitalCamera = new ArcRotateCamera("orbitalCamera", 1.5*Math.PI / 2, Math.PI / 2, planetRadius * 3, Vector3.Zero(), scene);
 orbitalCamera.wheelPrecision = 100 / planetRadius;
 orbitalCamera.lowerRadiusLimit = planetRadius * 1.5;
-orbitalCamera.minZ = 0.1;
-orbitalCamera.maxZ = planetRadius * 1000;
+orbitalCamera.fov = Tools.ToRadians(60);
+orbitalCamera.minZ = planetRadius / 100;
+orbitalCamera.maxZ = planetRadius * 100;
 
 const freeCamera = new FreeCamera("freeCamera", new Vector3(0, 0, -planetRadius * 4), scene);
 freeCamera.keysUp.push(90, 87); // z,w
@@ -55,9 +59,10 @@ freeCamera.keysDown.push(83); // s
 freeCamera.keysRight.push(68); // d
 freeCamera.keysUpward.push(32); // space
 freeCamera.keysDownward.push(16); // shift
-freeCamera.speed = planetRadius / 20;
-freeCamera.minZ = 0.1;
-freeCamera.maxZ = planetRadius * 1000;
+freeCamera.fov = Tools.ToRadians(60);
+freeCamera.speed = planetRadius / 20e3;
+freeCamera.minZ = planetRadius / 10e3;
+freeCamera.maxZ = planetRadius * 100;
 
 const depthRendererOrbital = scene.enableDepthRenderer(orbitalCamera, false, true);
 const depthRendererFree = scene.enableDepthRenderer(freeCamera, false, true);
@@ -73,11 +78,14 @@ sun.material = sunMaterial;
 
 const light = new DirectionalLight("light", Vector3.Zero(), scene);
 
-const earth = MeshBuilder.CreateSphere("Earth", { segments: 32, diameter: planetRadius * 2 }, scene);
+const earth = MeshBuilder.CreateSphere("Earth", { segments: 128, diameter: planetRadius * 2 }, scene);
 const earthMaterial = new EarthMaterial(earth, scene);
 earth.material = earthMaterial;
 
-let clock = 0;
+freeCamera.position = earth.position.add(new Vector3(0, planetRadius + 3e3, 0));
+scene.onAfterRenderObservable.addOnce(() => freeCamera.setTarget(sun.position.add(new Vector3(0, 2 * planetRadius, 0))));
+
+let elapsedSeconds = 0;
 
 // The important line
 const atmosphere = new AtmosphericScatteringPostProcess("atmosphere", earth, planetRadius, atmosphereRadius, sun, orbitalCamera, depthRendererOrbital, scene);
@@ -106,12 +114,16 @@ document.getElementById("switchView")?.addEventListener("click", () => {
 document.addEventListener("keydown", (e) => {
     if (e.key == "p") {
         // take screenshots
-        Tools.CreateScreenshotUsingRenderTarget(engine, scene.activeCamera!, { precision: 4 });
+        Tools.CreateScreenshotUsingRenderTarget(engine, scene.activeCamera!, { precision: 2 });
     } else if (e.key == "f") {
         console.log(Math.round(engine.getFps()));
     } else if (e.key == "c") {
         if (scene.activeCamera == freeCamera) switchCamera(orbitalCamera);
         else switchCamera(freeCamera);
+    } else if (e.key === "+") {
+        freeCamera.speed *= 1.2;
+    } else if (e.key === "-") {
+        freeCamera.speed /= 1.2;
     }
 });
 
@@ -125,16 +137,22 @@ scene.executeWhenReady(() => {
     engine.loadingScreen.hideLoadingUI();
 
     scene.registerBeforeRender(() => {
-        clock += (sliders.planetRotationSpeed * engine.getDeltaTime()) / 1000;
+        elapsedSeconds += (sliders.rotationSpeed * engine.getDeltaTime()) / 1000;
 
-        const sunRadians = (sliders.sunTheta / 180) * Math.PI;
+        const sunTheta = Tools.ToRadians(sliders.sunTheta);
+        const sunPhi = Tools.ToRadians(sliders.sunPhi);
 
-        sun.position = new Vector3(Math.cos(sunRadians), 0.5, Math.sin(sunRadians)).scale(planetRadius * 5);
+        sun.position = new Vector3(
+            Math.cos(sunTheta) * Math.cos(sunPhi),
+            Math.sin(sunPhi),
+            Math.sin(sunTheta) * Math.cos(sunPhi)
+        ).scaleInPlace(planetRadius * 5);
+
         light.direction = sun.position.negate().normalize();
 
-        earth.rotation.y = -clock / 1e2;
+        earth.rotation.y = -elapsedSeconds / 1e2;
 
-        earthMaterial.update(clock, sun.position);
+        earthMaterial.update(elapsedSeconds, sun.position);
     });
 
     engine.runRenderLoop(() => scene.render());

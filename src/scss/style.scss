@@ -17,6 +17,10 @@ body {
             padding: 10px 20px;
             margin-block-end: 0;
         }
+        input[type="color"] {
+            width: 100%;
+            padding: 0;
+        }
         .range-slider {
             margin-top: -5%;
         }

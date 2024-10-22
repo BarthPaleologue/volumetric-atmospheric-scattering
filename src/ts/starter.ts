@@ -37,8 +37,13 @@ const depthRenderer = scene.enableDepthRenderer(orbitalCamera, false, true);
 const sun = new DirectionalLight("light", new Vector3(-5, -2, 0), scene);
 sun.position = sun.direction.negate();
 
-const planetRadius = 100;
-const atmosphereRadius = 110;
+const planetRadius = 6000e3;
+const atmosphereRadius = 6100e3;
+
+orbitalCamera.minZ = planetRadius / 100;
+orbitalCamera.maxZ = planetRadius * 100;
+orbitalCamera.radius = planetRadius * 4;
+orbitalCamera.wheelPrecision = 100 / planetRadius;
 
 const earth = MeshBuilder.CreateSphere("Earth", { segments: 32, diameter: planetRadius * 2 }, scene);
 earth.rotation.x = Math.PI; // textures are always upside down on sphere for some reason...

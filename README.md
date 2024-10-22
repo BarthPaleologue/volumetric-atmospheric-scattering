@@ -7,7 +7,7 @@
 [![License](https://img.shields.io/github/license/BarthPaleologue/volumetric-atmospheric-scattering)](./LICENSE)
 
 
-A simple WebGPU and WebGL implementation of volumetric atmospheric scattering using BabylonJS. All you need are two files and two lines of code!
+A simple WebGPU and WebGL implementation of volumetric atmospheric scattering using BabylonJS. All you need are 2 files and 2 lines of code!
 
 ## Pictures
 
@@ -20,7 +20,7 @@ A simple WebGPU and WebGL implementation of volumetric atmospheric scattering us
 
 You can find a demo at https://barthpaleologue.github.io/volumetric-atmospheric-scattering/dist/
 
-You can know the current backend by looking at the bottom left corner of the screen, the logo will either be that of WebGL or WebGPU.
+The graphics backend is displayed at the bottom left: the logo will either be that of WebGL or WebGPU.
 
 ## How to use
 
@@ -44,20 +44,77 @@ const depthRenderer = scene.enableDepthRenderer(camera, false, true);
 
 The third parameter is set to true to increase the precision of the depth buffer, it is useful when working at planetary scales.
 
-The atmosphere can be tweaked using various settings grouped in the interface `AtmosphericScatteringPostProcess.settings`: 
+The atmosphere can be tweaked using various settings grouped in the object `AtmosphericScatteringPostProcess.settings`: 
 
 ```ts
-interface AtmosphereSettings {
-    planetRadius: number, // changes the value used as the minimum height of the atmosphere
-    atmosphereRadius: number, // changes the value used as the maximum height of the atmosphere
-    falloffFactor: number, // changes the pace at whitch the density of the atmosphere decreases
-    intensity: number, // changes the intensity of the colors scattered
-    scatteringStrength: number, // changes the dispersion of the three wavelengths
-    densityModifier: number, // changes the overall density of the atmosphere
-    redWaveLength: number, // changes the value used as the red wavelength in nanometers
-    greenWaveLength: number, // same but green
-    blueWaveLength: number, // same but blue
+export type AtmosphereSettings = {
+    /**
+     * Radius of the planet in meters
+     */
+    planetRadius: number;
+    
+    /**
+     * Radius of the atmosphere in meters (planetRadius + 100km in the case of Earth)
+     */
+    atmosphereRadius: number;
+
+    /**
+     * Height falloff of Rayleigh scattering (bigger = slower decrease)
+     */
+    rayleighHeight: number;
+
+    /**
+     * Rayleigh scattering coefficients (red, green, blue)
+     * @see https://sebh.github.io/publications/egsr2020.pdf (Hillaire 2020)
+     */
+    rayleighScatteringCoefficients: Vector3;
+
+    /**
+     * Height falloff of Mie scattering (bigger = slower decrease)
+     */
+    mieHeight: number;
+
+    /**
+     * Mie scattering coefficients (red, green, blue)
+     */
+    mieScatteringCoefficients: Vector3;
+
+    /**
+     * Mie scattering asymmetry factor (between -1 and 1)
+     */
+    mieAsymmetry: number;
+
+    /**
+     * Height of the ozone layer in meters above the planet surface
+     */
+    ozoneHeight: number;
+
+    /**
+     * Ozone absorption coefficients (red, green, blue)
+     * @see https://sebh.github.io/publications/egsr2020.pdf (Hillaire 2020)
+     */
+    ozoneAbsorptionCoefficients: Vector3;
+
+    /**
+     * Ozone absorption falloff around the ozone layer height (in meters)
+     */
+    ozoneFalloff: number;
+
+    /**
+     * Intensity of the sun
+     */
+    lightIntensity: number;
 }
 ```
 
-You can take a look at the simplest implementation in `./src/ts/starter.ts`
+Note that if you want to scale the atmosphere by a factor X, you need to multiply the atmosphere radius, the Rayleigh and Mie height falloffs and the ozone layer height by X. At the same you probably want to divide the scattering and absorptions coefficients by X to avoid compensate for the increased optical depth.
+
+You can take a look at the simplest usage in `./src/ts/starter.ts`.
+
+## References
+
+This implementation is based on [Sebastian Lague's video](https://www.youtube.com/watch?v=DxfEbulyFcY) for Rayleigh scattering and on [skythedragon's shadertoy](https://www.shadertoy.com/view/wlBXWK) for Mie scattering and Ozone absorption.
+
+Both are based on [Nishita's 1993 paper](http://nishitalab.org/user/nis/cdrom/sig93_nis.pdf).
+
+Better rendering and performance could be reached using [Sebastian Hillaire 2020 paper](https://sebh.github.io/publications/egsr2020.pdf)

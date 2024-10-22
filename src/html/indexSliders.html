@@ -10,37 +10,43 @@
 
 <body>
     <div id="ui">
-        <p>Intensity : </p>
+        <p>Light Intensity: </p>
         <div id="intensity"></div>
 
-        <p>Scattering Strength : </p>
-        <div id="scatteringStrength"></div>
-
-        <p>Atmosphere Radius : </p>
+        <p>Atmosphere thickness (km): </p>
         <div id="atmosphereRadius"></div>
 
-        <p>Falloff : </p>
-        <div id="falloff"></div>
+        <p>Rayleigh Scattering: </p>
+        <input type="color" id="rayleighScattering" />
 
-        <p>Density : </p>
-        <div id="density"></div>
+        <p>Rayleigh Height Falloff (km): </p>
+        <div id="rayleighHeightFalloff"></div>
 
-        <p>"Red" Wavelength : </p>
-        <div id="redWaveLength"></div>
+        <p>Mie Scattering: </p>
+        <input type="color" id="mieScattering" />
 
-        <p>"Green" Wavelength : </p>
-        <div id="greenWaveLength"></div>
+        <p>Mie Height Falloff (km): </p>
+        <div id="mieHeightFalloff"></div>
 
-        <p>"Blue" Wavelength : </p>
-        <div id="blueWaveLength"></div>
+        <p>Mie Asymmetry: </p>
+        <div id="mieAsymmetry"></div>
 
-        <p>Sun Orientation : </p>
+        <p>Ozone absorption: </p>
+        <input type="color" id="ozoneAbsorption" />
+
+        <p>Ozone layer height (km): </p>
+        <div id="ozoneLayerHeight"></div>
+
+        <p>Sun Theta: </p>
         <div id="sunOrientation"></div>
 
-        <p>Planet Rotation : </p>
+        <p>Sun Phi:</p>
+        <div id="sunPhi"></div>
+
+        <p>Planet Rotation: </p>
         <div id="planetRotation"></div>
 
-        <p>Camera FOV</p>
+        <p>Camera FOV:</p>
         <div id="cameraFOV"></div>
 
         <p id="switchView" class="button">Switch View</p>
