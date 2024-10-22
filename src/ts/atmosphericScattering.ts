@@ -33,6 +33,7 @@ export type AtmosphereSettings = {
 
     /**
      * Rayleigh scattering coefficients (red, green, blue)
+     * @see https://www.alanzucconi.com/2017/10/10/atmospheric-scattering-3/
      */
     rayleighCoefficients: Vector3;
 
@@ -134,7 +135,7 @@ export class AtmosphericScatteringPostProcess extends PostProcess {
             planetRadius: planetRadius,
             atmosphereRadius: atmosphereRadius,
             rayleighHeight: 8e3,
-            rayleighCoefficients: new Vector3(5.8e-6, 13.5e-6, 33.1e-6),
+            rayleighCoefficients: new Vector3(5.2e-6, 1.2e-5, 2.9e-5),
             mieHeight: 1.2e3,
             mieCoefficients: new Vector3(21e-6, 21e-6, 21e-6),
             ozoneHeight: 25e3,
