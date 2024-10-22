@@ -16,8 +16,8 @@ export class Sliders {
         });
 
         const radiusConversionFactor = 1e3;
-        new Slider("atmosphereRadius", document.getElementById("atmosphereRadius")!, (planetRadius/radiusConversionFactor), (atmosphereRadius/radiusConversionFactor) * 1.2, Math.round(atmosphereRadius/radiusConversionFactor), (val: number) => {
-            atmosphere.settings.atmosphereRadius = val * radiusConversionFactor;
+        new Slider("atmosphereRadius", document.getElementById("atmosphereRadius")!, 0, ((atmosphereRadius-planetRadius)/radiusConversionFactor) * 5.0, Math.round((atmosphereRadius-planetRadius)/radiusConversionFactor), (val: number) => {
+            atmosphere.settings.atmosphereRadius = planetRadius + val * radiusConversionFactor;
         });
 
         new Slider("sunOrientation", document.getElementById("sunOrientation")!, 1, 360, this.sunTheta, (val: number) => {
