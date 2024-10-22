@@ -16,7 +16,7 @@ export class Sliders {
         });
 
         const radiusConversionFactor = 1e3;
-        new Slider("atmosphereRadius", document.getElementById("atmosphereRadius")!, (planetRadius/radiusConversionFactor), (planetRadius/radiusConversionFactor) * 2, Math.round(atmosphereRadius/radiusConversionFactor), (val: number) => {
+        new Slider("atmosphereRadius", document.getElementById("atmosphereRadius")!, (planetRadius/radiusConversionFactor), (atmosphereRadius/radiusConversionFactor) * 1.2, Math.round(atmosphereRadius/radiusConversionFactor), (val: number) => {
             atmosphere.settings.atmosphereRadius = val * radiusConversionFactor;
         });
 
@@ -47,6 +47,10 @@ export class Sliders {
             const color = rayleighScatteringColorPicker.value;
             const color01 = Color3.FromHexString(color);
             atmosphere.settings.rayleighScatteringCoefficients = new Vector3(color01.r, color01.g, color01.b).scaleInPlace(rayleighConversionFactor);
+        });
+
+        new Slider("rayleighHeight", document.getElementById("rayleighHeightFalloff")!, 1, 300, atmosphere.settings.rayleighHeight / 1e2, (val: number) => {
+            atmosphere.settings.rayleighHeight = val * 1e2;
         });
 
         const mieScatteringColorPicker = document.getElementById("mieScattering") as HTMLInputElement;
@@ -81,6 +85,10 @@ export class Sliders {
             const color = ozoneAbsorptionColorPicker.value;
             const color01 = Color3.FromHexString(color);
             atmosphere.settings.ozoneAbsorptionCoefficients = new Vector3(color01.r, color01.g, color01.b).scaleInPlace(ozoneConversionFactor);
+        });
+
+        new Slider("ozoneLayerHeight", document.getElementById("ozoneLayerHeight")!, 1, 1000, atmosphere.settings.ozoneHeight / 1e2, (val: number) => {
+            atmosphere.settings.ozoneHeight = val * 1e2;
         });
     }
 }
