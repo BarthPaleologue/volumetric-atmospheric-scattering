@@ -32,20 +32,11 @@ uniform vec3 planetPosition; // planet position in world space
 uniform float planetRadius; // planet radius for height calculations
 uniform float atmosphereRadius; // atmosphere radius (calculate from planet center)
 
-// height falloff of rayleigh scattering
-float rayleighHeight = 8e3;
+uniform float rayleighHeight; // height falloff of rayleigh scattering
 
-// height falloff of mie scattering
-float mieHeight = 1.2e3;
+uniform float mieHeight; // height falloff of mie scattering
 
-uniform float falloffFactor; // controls exponential opacity falloff
 uniform float sunIntensity; // controls atmosphere overall brightness
-uniform float scatteringStrength; // controls color dispersion
-uniform float densityModifier; // density of the atmosphere
-
-uniform float redWaveLength; // the wave length for the red part of the scattering
-uniform float greenWaveLength; // same with green
-uniform float blueWaveLength; // same with blue
 
 vec3 mieCoeffs = vec3(21e-6);
 vec3 rayleighCoeffs = vec3(5.5e-6, 13.0e-6, 22.4e-6);

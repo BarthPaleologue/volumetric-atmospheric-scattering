@@ -8,36 +8,12 @@ export class Sliders {
     private rotationSpeed = 1;
 
     constructor(atmosphere: AtmosphericScatteringPostProcess, planetRadius: number, atmosphereRadius: number, scene: Scene) {
-        new Slider("intensity", document.getElementById("intensity")!, 0, 40, atmosphere.settings.intensity, (val: number) => {
-            atmosphere.settings.intensity = val;
+        new Slider("intensity", document.getElementById("intensity")!, 0, 40, atmosphere.settings.lightIntensity, (val: number) => {
+            atmosphere.settings.lightIntensity = val;
         });
 
         new Slider("atmosphereRadius", document.getElementById("atmosphereRadius")!, planetRadius, planetRadius * 3, Math.round(atmosphereRadius), (val: number) => {
             atmosphere.settings.atmosphereRadius = val;
-        });
-
-        new Slider("scatteringStrength", document.getElementById("scatteringStrength")!, 0, 40, atmosphere.settings.scatteringStrength * 10, (val: number) => {
-            atmosphere.settings.scatteringStrength = val / 10;
-        });
-
-        new Slider("falloff", document.getElementById("falloff")!, 0, 30, atmosphere.settings.falloffFactor, (val: number) => {
-            atmosphere.settings.falloffFactor = val;
-        });
-
-        new Slider("density", document.getElementById("density")!, 0, 30, atmosphere.settings.densityModifier * 10, (val: number) => {
-            atmosphere.settings.densityModifier = val / 10;
-        });
-
-        new Slider("redWaveLength", document.getElementById("redWaveLength")!, 0, 1000, atmosphere.settings.redWaveLength, (val: number) => {
-            atmosphere.settings.redWaveLength = val;
-        });
-
-        new Slider("greenWaveLength", document.getElementById("greenWaveLength")!, 0, 1000, atmosphere.settings.greenWaveLength, (val: number) => {
-            atmosphere.settings.greenWaveLength = val;
-        });
-
-        new Slider("blueWaveLength", document.getElementById("blueWaveLength")!, 0, 1000, atmosphere.settings.blueWaveLength, (val: number) => {
-            atmosphere.settings.blueWaveLength = val;
         });
 
         new Slider("sunOrientation", document.getElementById("sunOrientation")!, 1, 360, this.sunOrientation, (val: number) => {

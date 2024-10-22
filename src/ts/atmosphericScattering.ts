@@ -18,7 +18,7 @@ Effect.ShadersStore[`${shaderName}FragmentShader`] = atmosphereFragment;
 export type AtmosphereSettings = {
     planetRadius: number; // changes the value used as the minimum height of the atmosphere
     atmosphereRadius: number; // changes the value used as the maximum height of the atmosphere
-    
+
     /**
      * Height falloff of rayleigh scattering (bigger = slower decrease)
      */
@@ -29,13 +29,32 @@ export type AtmosphereSettings = {
      */
     mieHeight: number;
 
-    falloffFactor: number; // changes the pace at whitch the density of the atmosphere decreases
-    intensity: number; // changes the intensity of the colors scattered
-    scatteringStrength: number; // changes the dispersion of the three wavelengths
-    densityModifier: number; // changes the overall density of the atmosphere
-    redWaveLength: number; // changes the value used as the red wavelength in nanometers
-    greenWaveLength: number; // same but green
-    blueWaveLength: number; // same but blue
+    lightIntensity: number; // changes the intensity of the colors scattered
+}
+
+export const AtmosphereUniformNames = {
+    SUN_POSITION: "sunPosition",
+    CAMERA_POSITION: "cameraPosition",
+
+    INVERSE_PROJECTION: "inverseProjection",
+    INVERSE_VIEW: "inverseView",
+
+    CAMERA_NEAR: "cameraNear",
+    CAMERA_FAR: "cameraFar",
+
+    PLANET_POSITION: "planetPosition",
+    PLANET_RADIUS: "planetRadius",
+    ATMOSPHERE_RADIUS: "atmosphereRadius",
+
+    RAYLEIGH_HEIGHT: "rayleighHeight",
+    MIE_HEIGHT: "mieHeight",
+
+    SUN_INTENSITY: "sunIntensity",
+}
+
+export const AtmosphereSamplerNames = {
+    TEXTURE: "textureSampler",
+    DEPTH: "depthSampler"
 }
 
 export class AtmosphericScatteringPostProcess extends PostProcess {
@@ -59,31 +78,9 @@ export class AtmosphericScatteringPostProcess extends PostProcess {
             name,
             shaderName,
             [
-                "sunPosition",
-                "cameraPosition",
-
-                "inverseProjection",
-                "inverseView",
-
-                "cameraNear",
-                "cameraFar",
-
-                "planetPosition",
-                "planetRadius",
-                "atmosphereRadius",
-
-                "rayleighHeight",
-                "mieHeight",
-                "falloffFactor",
-                "sunIntensity",
-                "scatteringStrength",
-                "densityModifier",
-
-                "redWaveLength",
-                "greenWaveLength",
-                "blueWaveLength"
+                ...Object.values(AtmosphereUniformNames)
             ],
-            ["textureSampler", "depthSampler"],
+            [...Object.values(AtmosphereSamplerNames)],
             1,
             camera,
             Texture.BILINEAR_SAMPLINGMODE,
@@ -96,13 +93,7 @@ export class AtmosphericScatteringPostProcess extends PostProcess {
             atmosphereRadius: atmosphereRadius,
             rayleighHeight: 8e3,
             mieHeight: 1.2e3,
-            falloffFactor: 15,
-            intensity: 20,
-            scatteringStrength: 1,
-            densityModifier: 1,
-            redWaveLength: 700,
-            greenWaveLength: 530,
-            blueWaveLength: 440
+            lightIntensity: 20
         };
 
         this.camera = camera;
@@ -112,30 +103,26 @@ export class AtmosphericScatteringPostProcess extends PostProcess {
         this.depthRenderer = depthRenderer;
 
         this.onApplyObservable.add((effect: Effect) => {
-            effect.setTexture("depthSampler", this.depthRenderer.getDepthMap());
+            effect.setTexture(AtmosphereSamplerNames.DEPTH, this.depthRenderer.getDepthMap());
 
-            effect.setVector3("sunPosition", this.sun.getAbsolutePosition());
-            effect.setVector3("cameraPosition", this.camera.position);
+            effect.setVector3(AtmosphereUniformNames.SUN_POSITION, this.sun.getAbsolutePosition());
+            effect.setVector3(AtmosphereUniformNames.CAMERA_POSITION, this.camera.position);
 
-            effect.setVector3("planetPosition", this.planet.absolutePosition);
+            effect.setVector3(AtmosphereUniformNames.PLANET_POSITION, this.planet.absolutePosition);
 
-            effect.setMatrix("inverseProjection", Matrix.Invert(this.camera.getProjectionMatrix()));
-            effect.setMatrix("inverseView", Matrix.Invert(this.camera.getViewMatrix()));
+            effect.setMatrix(AtmosphereUniformNames.INVERSE_PROJECTION, Matrix.Invert(this.camera.getProjectionMatrix()));
+            effect.setMatrix(AtmosphereUniformNames.INVERSE_VIEW, Matrix.Invert(this.camera.getViewMatrix()));
 
-            effect.setFloat("cameraNear", camera.minZ);
-            effect.setFloat("cameraFar", camera.maxZ);
+            effect.setFloat(AtmosphereUniformNames.CAMERA_NEAR, camera.minZ);
+            effect.setFloat(AtmosphereUniformNames.CAMERA_FAR, camera.maxZ);
 
-            effect.setFloat("planetRadius", this.settings.planetRadius);
-            effect.setFloat("atmosphereRadius", this.settings.atmosphereRadius);
+            effect.setFloat(AtmosphereUniformNames.PLANET_RADIUS, this.settings.planetRadius);
+            effect.setFloat(AtmosphereUniformNames.ATMOSPHERE_RADIUS, this.settings.atmosphereRadius);
 
-            effect.setFloat("falloffFactor", this.settings.falloffFactor);
-            effect.setFloat("sunIntensity", this.settings.intensity);
-            effect.setFloat("scatteringStrength", this.settings.scatteringStrength);
-            effect.setFloat("densityModifier", this.settings.densityModifier);
+            effect.setFloat(AtmosphereUniformNames.RAYLEIGH_HEIGHT, this.settings.rayleighHeight);
+            effect.setFloat(AtmosphereUniformNames.MIE_HEIGHT, this.settings.mieHeight);
 
-            effect.setFloat("redWaveLength", this.settings.redWaveLength);
-            effect.setFloat("greenWaveLength", this.settings.greenWaveLength);
-            effect.setFloat("blueWaveLength", this.settings.blueWaveLength);
+            effect.setFloat(AtmosphereUniformNames.SUN_INTENSITY, this.settings.lightIntensity);
         });
     }
 }
