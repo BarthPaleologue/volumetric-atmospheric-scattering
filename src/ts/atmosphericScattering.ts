@@ -15,9 +15,20 @@ import atmosphereFragment from "../glsl/atmosphericScattering.glsl";
 const shaderName = "atmosphere";
 Effect.ShadersStore[`${shaderName}FragmentShader`] = atmosphereFragment;
 
-interface AtmosphereSettings {
+export type AtmosphereSettings = {
     planetRadius: number; // changes the value used as the minimum height of the atmosphere
     atmosphereRadius: number; // changes the value used as the maximum height of the atmosphere
+    
+    /**
+     * Height falloff of rayleigh scattering (bigger = slower decrease)
+     */
+    rayleighHeight: number;
+
+    /**
+     * Height falloff of mie scattering (bigger = slower decrease)
+     */
+    mieHeight: number;
+
     falloffFactor: number; // changes the pace at whitch the density of the atmosphere decreases
     intensity: number; // changes the intensity of the colors scattered
     scatteringStrength: number; // changes the dispersion of the three wavelengths
@@ -61,6 +72,8 @@ export class AtmosphericScatteringPostProcess extends PostProcess {
                 "planetRadius",
                 "atmosphereRadius",
 
+                "rayleighHeight",
+                "mieHeight",
                 "falloffFactor",
                 "sunIntensity",
                 "scatteringStrength",
@@ -81,8 +94,10 @@ export class AtmosphericScatteringPostProcess extends PostProcess {
         this.settings = {
             planetRadius: planetRadius,
             atmosphereRadius: atmosphereRadius,
+            rayleighHeight: 8e3,
+            mieHeight: 1.2e3,
             falloffFactor: 15,
-            intensity: 15,
+            intensity: 20,
             scatteringStrength: 1,
             densityModifier: 1,
             redWaveLength: 700,

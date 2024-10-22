@@ -28,7 +28,9 @@ const canvas = document.getElementById("renderer") as HTMLCanvasElement;
 canvas.width = window.innerWidth - 300;
 canvas.height = window.innerHeight;
 
-const engine = await EngineFactory.CreateAsync(canvas, {});
+const engine = await EngineFactory.CreateAsync(canvas, {
+    useHighPrecisionMatrix: true,
+});
 
 if (engine instanceof WebGPUEngine) document.getElementById("webgl")?.remove();
 else document.getElementById("webgpu")?.remove();
@@ -39,14 +41,14 @@ const scene = new Scene(engine);
 scene.clearColor = new Color4(0, 0, 0, 1);
 scene.performancePriority = ScenePerformancePriority.Intermediate;
 
-const planetRadius = 1;
-const atmosphereRadius = planetRadius * 1.1;
+const planetRadius = 6000e3;
+const atmosphereRadius = planetRadius + 100e3;
 
 const orbitalCamera = new ArcRotateCamera("orbitalCamera", Math.PI / 2, Math.PI / 3, planetRadius * 4, Vector3.Zero(), scene);
 orbitalCamera.wheelPrecision = 100 / planetRadius;
 orbitalCamera.lowerRadiusLimit = planetRadius * 1.5;
-orbitalCamera.minZ = 0.1;
-orbitalCamera.maxZ = planetRadius * 1000;
+orbitalCamera.minZ = planetRadius / 100;
+orbitalCamera.maxZ = planetRadius * 100;
 
 const freeCamera = new FreeCamera("freeCamera", new Vector3(0, 0, -planetRadius * 4), scene);
 freeCamera.keysUp.push(90, 87); // z,w
@@ -56,8 +58,8 @@ freeCamera.keysRight.push(68); // d
 freeCamera.keysUpward.push(32); // space
 freeCamera.keysDownward.push(16); // shift
 freeCamera.speed = planetRadius / 20;
-freeCamera.minZ = 0.1;
-freeCamera.maxZ = planetRadius * 1000;
+freeCamera.minZ = planetRadius / 100;
+freeCamera.maxZ = planetRadius * 100;
 
 const depthRendererOrbital = scene.enableDepthRenderer(orbitalCamera, false, true);
 const depthRendererFree = scene.enableDepthRenderer(freeCamera, false, true);
