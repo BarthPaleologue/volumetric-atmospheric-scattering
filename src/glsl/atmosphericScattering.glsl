@@ -37,6 +37,7 @@ uniform vec3 rayleighCoeffs; // rayleigh scattering coefficients
 
 uniform float mieHeight; // height falloff of mie scattering (in meters)
 uniform vec3 mieCoeffs; // mie scattering coefficients
+uniform float mieAsymmetry; // mie scattering asymmetry (between -1 and 1)
 
 uniform float ozoneHeight; // height of ozone layer in meters above the surface
 uniform vec3 ozoneCoeffs; // ozone absorption coefficients
@@ -175,7 +176,7 @@ vec3 calculateLight(vec3 rayOrigin, vec3 rayDir, float rayLength, vec3 originalC
     // https://glossary.ametsoc.org/wiki/Rayleigh_phase_function
     float phaseRayleigh = 3.0 / (16.0 * PI) * (1.0 + costheta2);
 
-    float g = 0.7;
+    float g = mieAsymmetry;
     float g2 = g * g;
     float phaseMie = ((3.0 * (1.0 - g2)) / (2.0 * (2.0 + g2))) * ((1.0 + costheta2) / pow(1.0 + g2 - 2.0 * g * costheta, 1.5));
     

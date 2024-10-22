@@ -48,6 +48,11 @@ export type AtmosphereSettings = {
     mieScatteringCoefficients: Vector3;
 
     /**
+     * Mie scattering asymmetry factor (between -1 and 1)
+     */
+    mieAsymmetry: number;
+
+    /**
      * Height of the ozone layer in meters above the planet surface
      */
     ozoneHeight: number;
@@ -88,6 +93,7 @@ const AtmosphereUniformNames = {
 
     MIE_HEIGHT: "mieHeight",
     MIE_COEFFICIENTS: "mieCoeffs",
+    MIE_ASYMMETRY: "mieAsymmetry",
 
     OZONE_HEIGHT: "ozoneHeight",
     OZONE_COEFFICIENTS: "ozoneCoeffs",
@@ -139,6 +145,7 @@ export class AtmosphericScatteringPostProcess extends PostProcess {
             rayleighScatteringCoefficients: new Vector3(5.8e-6, 13.5e-6, 33.1e-6),
             mieHeight: 1.2e3,
             mieScatteringCoefficients: new Vector3(3.9e-6, 3.9e-6, 3.9e-6),
+            mieAsymmetry: 0.8,
             ozoneHeight: 25e3,
             ozoneAbsorptionCoefficients: new Vector3(0.6e-6, 1.8e-6, 0.085e-6),
             ozoneFalloff: 5e3,
@@ -173,7 +180,8 @@ export class AtmosphericScatteringPostProcess extends PostProcess {
 
             effect.setFloat(AtmosphereUniformNames.MIE_HEIGHT, this.settings.mieHeight);
             effect.setVector3(AtmosphereUniformNames.MIE_COEFFICIENTS, this.settings.mieScatteringCoefficients);
-
+            effect.setFloat(AtmosphereUniformNames.MIE_ASYMMETRY, this.settings.mieAsymmetry);
+            
             effect.setFloat(AtmosphereUniformNames.OZONE_HEIGHT, this.settings.ozoneHeight);
             effect.setVector3(AtmosphereUniformNames.OZONE_COEFFICIENTS, this.settings.ozoneAbsorptionCoefficients);
             effect.setFloat(AtmosphereUniformNames.OZONE_FALLOFF, this.settings.ozoneFalloff);
