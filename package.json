@@ -34,7 +34,7 @@
     "build:prod": "webpack --mode=production --node-env=production",
     "watch": "webpack --watch",
     "serve": "webpack serve",
-    "format": "prettier --config .prettierrc 'src/**/*.ts' --write",
+    "format": "prettier --config .prettierrc src//**/*.{js,jsx,json,ts} --write",
     "lint:check": "eslint src/ts",
     "lint:fix": "eslint src/ts --fix"
   }
