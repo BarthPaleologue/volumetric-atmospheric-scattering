@@ -16,9 +16,16 @@ export class Sliders {
         });
 
         const radiusConversionFactor = 1e3;
-        new Slider("atmosphereRadius", document.getElementById("atmosphereRadius")!, 0, ((atmosphereRadius-planetRadius)/radiusConversionFactor) * 5.0, Math.round((atmosphereRadius-planetRadius)/radiusConversionFactor), (val: number) => {
-            atmosphere.settings.atmosphereRadius = planetRadius + val * radiusConversionFactor;
-        });
+        new Slider(
+            "atmosphereRadius",
+            document.getElementById("atmosphereRadius")!,
+            0,
+            ((atmosphereRadius - planetRadius) / radiusConversionFactor) * 5.0,
+            Math.round((atmosphereRadius - planetRadius) / radiusConversionFactor),
+            (val: number) => {
+                atmosphere.settings.atmosphereRadius = planetRadius + val * radiusConversionFactor;
+            }
+        );
 
         new Slider("sunOrientation", document.getElementById("sunOrientation")!, 1, 360, this.sunTheta, (val: number) => {
             this.sunTheta = val;
@@ -39,10 +46,10 @@ export class Sliders {
         const rayleighScatteringColorPicker = document.getElementById("rayleighScattering") as HTMLInputElement;
         const rayleighConversionFactor = 128e-6;
         rayleighScatteringColorPicker.value = new Color3(
-            atmosphere.settings.rayleighScatteringCoefficients.x / rayleighConversionFactor, 
-            atmosphere.settings.rayleighScatteringCoefficients.y / rayleighConversionFactor, 
-            atmosphere.settings.rayleighScatteringCoefficients.z / rayleighConversionFactor)
-            .toHexString();
+            atmosphere.settings.rayleighScatteringCoefficients.x / rayleighConversionFactor,
+            atmosphere.settings.rayleighScatteringCoefficients.y / rayleighConversionFactor,
+            atmosphere.settings.rayleighScatteringCoefficients.z / rayleighConversionFactor
+        ).toHexString();
         rayleighScatteringColorPicker.addEventListener("input", () => {
             const color = rayleighScatteringColorPicker.value;
             const color01 = Color3.FromHexString(color);
@@ -58,8 +65,8 @@ export class Sliders {
         mieScatteringColorPicker.value = new Color3(
             atmosphere.settings.mieScatteringCoefficients.x / mieConversionFactor,
             atmosphere.settings.mieScatteringCoefficients.y / mieConversionFactor,
-            atmosphere.settings.mieScatteringCoefficients.z / mieConversionFactor)
-            .toHexString();
+            atmosphere.settings.mieScatteringCoefficients.z / mieConversionFactor
+        ).toHexString();
         mieScatteringColorPicker.addEventListener("input", () => {
             const color = mieScatteringColorPicker.value;
             const color01 = Color3.FromHexString(color);
@@ -79,8 +86,8 @@ export class Sliders {
         ozoneAbsorptionColorPicker.value = new Color3(
             atmosphere.settings.ozoneAbsorptionCoefficients.x / ozoneConversionFactor,
             atmosphere.settings.ozoneAbsorptionCoefficients.y / ozoneConversionFactor,
-            atmosphere.settings.ozoneAbsorptionCoefficients.z / ozoneConversionFactor)
-            .toHexString();
+            atmosphere.settings.ozoneAbsorptionCoefficients.z / ozoneConversionFactor
+        ).toHexString();
         ozoneAbsorptionColorPicker.addEventListener("input", () => {
             const color = ozoneAbsorptionColorPicker.value;
             const color01 = Color3.FromHexString(color);

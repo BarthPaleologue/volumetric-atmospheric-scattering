@@ -30,7 +30,7 @@ canvas.width = window.innerWidth - 300;
 canvas.height = window.innerHeight;
 
 const engine = await EngineFactory.CreateAsync(canvas, {
-    useHighPrecisionMatrix: true,
+    useHighPrecisionMatrix: true
 });
 
 if (engine instanceof WebGPUEngine) document.getElementById("webgl")?.remove();
@@ -45,7 +45,7 @@ scene.performancePriority = ScenePerformancePriority.Intermediate;
 const planetRadius = 6000e3;
 const atmosphereRadius = planetRadius + 100e3;
 
-const orbitalCamera = new ArcRotateCamera("orbitalCamera", 1.5*Math.PI / 2, Math.PI / 2, planetRadius * 3, Vector3.Zero(), scene);
+const orbitalCamera = new ArcRotateCamera("orbitalCamera", (1.5 * Math.PI) / 2, Math.PI / 2, planetRadius * 3, Vector3.Zero(), scene);
 orbitalCamera.wheelPrecision = 100 / planetRadius;
 orbitalCamera.lowerRadiusLimit = planetRadius * 1.5;
 orbitalCamera.fov = Tools.ToRadians(60);
@@ -142,11 +142,7 @@ scene.executeWhenReady(() => {
         const sunTheta = Tools.ToRadians(sliders.sunTheta);
         const sunPhi = Tools.ToRadians(sliders.sunPhi);
 
-        sun.position = new Vector3(
-            Math.cos(sunTheta) * Math.cos(sunPhi),
-            Math.sin(sunPhi),
-            Math.sin(sunTheta) * Math.cos(sunPhi)
-        ).scaleInPlace(planetRadius * 5);
+        sun.position = new Vector3(Math.cos(sunTheta) * Math.cos(sunPhi), Math.sin(sunPhi), Math.sin(sunTheta) * Math.cos(sunPhi)).scaleInPlace(planetRadius * 5);
 
         light.direction = sun.position.negate().normalize();
 
