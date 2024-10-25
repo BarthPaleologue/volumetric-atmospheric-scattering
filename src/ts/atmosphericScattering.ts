@@ -20,7 +20,7 @@ export type AtmosphereSettings = {
      * Radius of the planet in meters
      */
     planetRadius: number;
-    
+
     /**
      * Radius of the atmosphere in meters (planetRadius + 100km in the case of Earth)
      */
@@ -72,7 +72,7 @@ export type AtmosphereSettings = {
      * Intensity of the sun
      */
     lightIntensity: number;
-}
+};
 
 const AtmosphereUniformNames = {
     SUN_POSITION: "sunPosition",
@@ -99,13 +99,13 @@ const AtmosphereUniformNames = {
     OZONE_COEFFICIENTS: "ozoneCoeffs",
     OZONE_FALLOFF: "ozoneFalloff",
 
-    SUN_INTENSITY: "sunIntensity",
-}
+    SUN_INTENSITY: "sunIntensity"
+};
 
 const AtmosphereSamplerNames = {
     TEXTURE: "textureSampler",
     DEPTH: "depthSampler"
-}
+};
 
 export class AtmosphericScatteringPostProcess extends PostProcess {
     settings: AtmosphereSettings;
@@ -127,9 +127,7 @@ export class AtmosphericScatteringPostProcess extends PostProcess {
         super(
             name,
             shaderName,
-            [
-                ...Object.values(AtmosphereUniformNames)
-            ],
+            [...Object.values(AtmosphereUniformNames)],
             [...Object.values(AtmosphereSamplerNames)],
             1,
             camera,
@@ -181,7 +179,7 @@ export class AtmosphericScatteringPostProcess extends PostProcess {
             effect.setFloat(AtmosphereUniformNames.MIE_HEIGHT, this.settings.mieHeight);
             effect.setVector3(AtmosphereUniformNames.MIE_COEFFICIENTS, this.settings.mieScatteringCoefficients);
             effect.setFloat(AtmosphereUniformNames.MIE_ASYMMETRY, this.settings.mieAsymmetry);
-            
+
             effect.setFloat(AtmosphereUniformNames.OZONE_HEIGHT, this.settings.ozoneHeight);
             effect.setVector3(AtmosphereUniformNames.OZONE_COEFFICIENTS, this.settings.ozoneAbsorptionCoefficients);
             effect.setFloat(AtmosphereUniformNames.OZONE_FALLOFF, this.settings.ozoneFalloff);
